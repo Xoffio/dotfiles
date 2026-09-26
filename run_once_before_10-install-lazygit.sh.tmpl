@@ -7,7 +7,7 @@ ARCH="{{ if eq .chezmoi.arch "arm64" }}arm64{{ else }}x86_64{{ end }}"
 FILENAME="lazygit_${LAZYGIT_VERSION}_${OS}_${ARCH}.tar.gz"
 
 if command -v lazygit >/dev/null 2>&1; then
-  INSTALLED="$(lazygit --version | grep -Eo 'version=[0-9]+\.[0-9]+\.[0-9]+' | cut -d= -f2)"
+  INSTALLED="$(lazygit --version | tr ',' '\n' | grep -E '^ ?version=' | cut -d= -f2)"
   if [ "$INSTALLED" = "$LAZYGIT_VERSION" ]; then
     echo "lazygit $LAZYGIT_VERSION already installed, skipping"
     exit 0
