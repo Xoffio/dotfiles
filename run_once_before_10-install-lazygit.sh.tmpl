@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euo pipefail
+
+LAZYGIT_VERSION="{{ .versions.lazygit }}"
+OS="{{ .chezmoi.os }}"
+ARCH="{{ if eq .chezmoi.arch "arm64" }}arm64{{ else }}x86_64{{ end }}"
+FILENAME="lazygit_${LAZYGIT_VERSION}_${OS}_${ARCH}.tar.gz"
+
+if command -v lazygit >/dev/null 2>&1; then
+  INSTALLED="$(lazygit --version | grep -Eo 'version=[0-9]+\.[0-9]+\.[0-9]+' | cut -d= -f2)"
+  if [ "$INSTALLED" = "$LAZYGIT_VERSION" ]; then
+    echo "lazygit $LAZYGIT_VERSION already installed, skipping"
+    exit 0
+  fi
+fi
+
+cd /tmp
+curl -sLo "$FILENAME" "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/${FILENAME}"
+curl -sLo checksums.txt "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/checksums.txt"
+
+grep " ${FILENAME}\$" checksums.txt | {{ if eq .chezmoi.os "darwin" }}shasum -a 256 -c{{ else }}sha256sum -c{{ end }} -
+
+tar xf "$FILENAME" lazygit
+sudo mkdir -p /usr/local/bin
+sudo install lazygit /usr/local/bin/lazygit
+rm -f "$FILENAME" checksums.txt lazygit
