@@ -31,7 +31,10 @@ checksum.sha256 = "{{ if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`)
 {{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) -}}
   {{- $rgTriple = "aarch64-apple-darwin" -}}
   {{- $rgChecksum = "3750b2e93f37e0c692657da574d7019a101c0084da05a790c83fd335bad973e4" -}}
-{{- end -}}
+{{- else if eq .chezmoi.os `windows` -}}
+  {{- $rgTriple = "x86_64-pc-windows-msvc" -}}
+  {{- $rgChecksum = "71b2fef860abe467217a538ff31de02f5258807c0129f771846f87bd029aafc5" -}}
+{{- end }}
 
 [".local/bin/rg"]
     type = "archive-file"
