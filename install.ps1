@@ -87,6 +87,3 @@ if ($args.Count -gt 0) {
 }
 
 Write-Host "Done."
-Write-Host "Note: $InstallDir was added to PATH for this session only."
-Write-Host "To persist it, run:"
-Write-Host "  [Environment]::SetEnvironmentVariable('Path', '$InstallDir;' + [Environment]::GetEnvironmentVariable('Path', 'User'), 'User')"

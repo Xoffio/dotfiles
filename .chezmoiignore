@@ -1,0 +1,8 @@
+README.md
+install.sh
+install.ps1
+
+# Ignore in OS that are not Windows
+{{- if ne .chezmoi.os "windows" }}
+Documents
+{{- end }}
