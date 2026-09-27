@@ -36,9 +36,9 @@ checksum.sha256 = "{{ if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`)
   {{- $rgChecksum = "71b2fef860abe467217a538ff31de02f5258807c0129f771846f87bd029aafc5" -}}
 {{- end }}
 
-[".local/bin/rg"]
+[".local/bin/rg{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
     type = "archive-file"
-    url = "https://github.com/BurntSushi/ripgrep/releases/download/{{ $rgVersion }}/ripgrep-{{ $rgVersion }}-{{ $rgTriple }}.tar.gz"
-    path = "ripgrep-{{ $rgVersion }}-{{ $rgTriple }}/rg"
+    url = "https://github.com/BurntSushi/ripgrep/releases/download/{{ $rgVersion }}/ripgrep-{{ $rgVersion }}-{{ $rgTriple }}.{{ if eq .chezmoi.os `windows` }}zip{{ else }}tar.gz{{ end }}"
+    path = "ripgrep-{{ $rgVersion }}-{{ $rgTriple }}/rg{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
     executable = true
     checksum.sha256 = "{{ $rgChecksum }}"
