@@ -1,2 +1,3 @@
 [versions]
 lazygit = "0.65.1"
+neovim = "0.12.5"

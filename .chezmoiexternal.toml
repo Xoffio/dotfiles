@@ -1,0 +1,10 @@
+[".config/nvim"]
+    type = "git-repo"
+    url = "https://github.com/Xoffio/astrofile.git"
+    refreshPeriod = "168h"
+
+[".local/share/nvim-app"]
+    type = "archive"
+    url = "https://github.com/neovim/neovim/releases/download/v{{ .versions.neovim }}/nvim-{{ if eq .chezmoi.os "darwin" }}macos{{ else }}linux{{ end }}-{{ if eq .chezmoi.arch "arm64" }}arm64{{ else }}x86_64{{ end }}.tar.gz"
+    exact = true
+    stripComponents = 1
