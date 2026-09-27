@@ -66,9 +66,20 @@ finally {
     Remove-Item -Recurse -Force -Path $tmpDir -ErrorAction SilentlyContinue
 }
 
-# make it usable in this same session, even before the user's PATH
-# has been permanently updated
+# make it usable in this same session
 $env:Path = "$InstallDir;$env:Path"
+
+# persist it in the permanent User PATH so every new shell (or app)
+# picks it up automatically from now on - no manual step needed
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if (-not $userPath) { $userPath = "" }
+ 
+if (-not ($userPath -split ";" | Where-Object { $_ -eq $InstallDir })) {
+    [Environment]::SetEnvironmentVariable("Path", "$InstallDir;$userPath", "User")
+    Write-Host "Added $InstallDir to your permanent User PATH."
+} else {
+    Write-Host "$InstallDir is already on your User PATH."
+}
 
 if ($args.Count -gt 0) {
     Write-Host "Running: chezmoi $($args -join ' ')"
