@@ -1,19 +1,41 @@
 [".config/nvim"]
 type = "git-repo"
 url = "https://github.com/Xoffio/astrofile.git"
-refreshPeriod = "168h"
+refreshPeriod = "24h"
 
 [".local/share/nvim-app"]
 type = "archive"
 url = "https://github.com/neovim/neovim/releases/download/v{{ .versions.neovim }}/nvim-{{ if eq .chezmoi.os `darwin` }}macos{{ else }}linux{{ end }}-{{ if eq .chezmoi.arch `arm64` }}arm64{{ else }}x86_64{{ end }}.tar.gz"
 exact = true
 stripComponents = 1
-refreshPeriod = "168h"
 
 [".local/bin/lazygit{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
 type = "archive-file"
 url = "https://github.com/jesseduffield/lazygit/releases/download/v{{ .versions.lazygit }}/lazygit_{{ .versions.lazygit }}_{{ .chezmoi.os }}_{{ if eq .chezmoi.arch `arm64` }}arm64{{ else }}x86_64{{ end }}.{{ if eq .chezmoi.os `windows` }}zip{{ else }}tar.gz{{ end }}"
 path = "lazygit{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
 executable = true
-refreshPeriod = "168h"
 checksum.sha256 = "{{ if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) }}02beacbcda0fa342e50ae3480ba8147307353af3fb28e1d5f790e02329c201a6{{ else if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `arm64`) }}49abecdf6adf4f2dfdb11bf7b9bfada267ea523612ed809d1c6d87f6c04000a7{{ else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `amd64`) }}fde13daf583511aa24c42ca154911643231a5af784c7cdd8117264b2fc035b33{{ else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) }}65a367c6ea9a88efebaaf7998a6835eedb987e04916cef677264ff9b31b1b13e{{ end }}"
+
+{{ $rgVersion := .versions.ripgrep -}}
+{{- $rgTriple := "" -}}
+{{- $rgChecksum := "" -}}
+{{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $rgTriple = "x86_64-unknown-linux-musl" -}}
+  {{- $rgChecksum = "33e15bcf1624b25cdd2a55813a47a2f95dbe126268203e76aa6a585d1e7b149c" -}}
+{{- else if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $rgTriple = "aarch64-unknown-linux-gnu" -}}
+  {{- $rgChecksum = "a740b91c82eaf9914cfedd353572f2791cbe0162c84101ee0951058f4dcbc90d" -}}
+{{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $rgTriple = "x86_64-apple-darwin" -}}
+  {{- $rgChecksum = "af7825fcc69a2afc7a7aea55fc9af90e26421d8f20fe59df32e233c0b8a231c1" -}}
+{{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $rgTriple = "aarch64-apple-darwin" -}}
+  {{- $rgChecksum = "3750b2e93f37e0c692657da574d7019a101c0084da05a790c83fd335bad973e4" -}}
+{{- end -}}
+
+[".local/bin/rg"]
+    type = "archive-file"
+    url = "https://github.com/BurntSushi/ripgrep/releases/download/{{ $rgVersion }}/ripgrep-{{ $rgVersion }}-{{ $rgTriple }}.tar.gz"
+    path = "ripgrep-{{ $rgVersion }}-{{ $rgTriple }}/rg"
+    executable = true
+    checksum.sha256 = "{{ $rgChecksum }}"
