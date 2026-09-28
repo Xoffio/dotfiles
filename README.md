@@ -37,6 +37,12 @@ anything declared in `.chezmoiexternal.toml` (lazygit, ripgrep, neovim, etc).
 
 ## Day-to-day usage
 
+Pull latest changes from repo
+
+```bash
+chezmoi update -v
+```
+
 **Add a new dotfile** to be managed:
 
 ```bash

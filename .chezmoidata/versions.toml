@@ -2,3 +2,4 @@
 lazygit = "0.65.1"
 neovim = "0.12.5"
 ripgrep = "15.2.0"
+opencode = "1.18.32"
