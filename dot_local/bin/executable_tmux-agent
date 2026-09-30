@@ -1,0 +1,245 @@
+#!/usr/bin/env bash
+# tmux-agent - Let AI agents push notifications and update tmux window status
+#
+# Usage:
+#   tmux-agent notify [low|normal|critical] "Title" "Message"
+#   tmux-agent status [busy|idle|question|permission|answered|error|clear] ["Window Name"] [window-id]
+#   tmux-agent status-clear ["Window Name"] [window-id]
+#
+# Status emoji are appended to the END of the window name:
+#   busy       -> "p-test 💻"
+#   idle       -> "p-test ✅"
+#   question   -> "p-test ❓"
+#   permission -> "p-test 🔐"
+#   answered   -> "p-test 😊"
+#   error      -> "p-test ❗"
+#   clear      -> "p-test"
+#
+# Legacy aliases: working->busy, check->answered
+#
+# Environment:
+#   TMUX_AGENT_SESSION   Override target session (default: current or first available)
+#   TMUX_AGENT_WINDOW    Window name to target (default: current window)
+#   TMUX_AGENT_ID        Unique suffix to add after emoji (default: none)
+
+set -euo pipefail
+
+EMOJI_BUSY="🤖"
+EMOJI_IDLE="✅"
+EMOJI_QUESTION="❓"
+EMOJI_PERMISSION="🔐"
+EMOJI_ANSWERED="😊"
+EMOJI_ERROR="❗"
+# Legacy emoji from previous versions (still stripped)
+EMOJI_LEGACY_WORKING="🏗️"
+EMOJI_LEGACY_CHECK="✅"
+EMOJI_LEGACY_ERROR="❌"
+
+# Get target session
+_get_session() {
+	local session="${TMUX_AGENT_SESSION:-}"
+	if [[ -z "$session" ]]; then
+		if [[ -n "${TMUX_PANE:-}" ]]; then
+			session=$(tmux display-message -t "$TMUX_PANE" -p '#S' 2>/dev/null || true)
+		elif [[ -n "${TMUX:-}" ]]; then
+			session=$(tmux display-message -p '#S' 2>/dev/null || true)
+		else
+			session=$(tmux list-sessions -F '#{session_name}' 2>/dev/null | head -n1 || true)
+		fi
+	fi
+
+	if [[ -z "$session" ]]; then
+		echo "No tmux session available" >&2
+		return 1
+	fi
+	echo "$session"
+}
+
+# Remove status emoji (current, legacy, and old "[emoji]" prefixes) from a window name
+_strip_status() {
+	local name="$1"
+	local prev=""
+
+	# Strip legacy buggy prefixes like "[🏗️] " or "[] " (repeatedly)
+	while [[ "$name" =~ ^\[([^]]*)\][[:space:]]*(.*)$ ]]; do
+		local inner="${BASH_REMATCH[1]}"
+		local rest="${BASH_REMATCH[2]}"
+		# Only strip if the bracket content is empty or just known emoji/whitespace
+		inner="${inner//🏗️/}"
+		inner="${inner//🏗/}"
+		inner="${inner//✅/}"
+		inner="${inner//❌/}"
+		inner="${inner//[[:space:]]/}"
+		[[ -n "$inner" ]] && break
+		name="$rest"
+	done
+
+	# Strip trailing status emoji + whitespace (repeatedly, pure bash suffix removal)
+	while [[ "$prev" != "$name" ]]; do
+		prev="$name"
+		# Trim trailing whitespace
+		name="${name%"${name##*[![:space:]]}"}"
+		# Remove known emoji suffixes
+		name="${name%"$EMOJI_BUSY"}"
+		name="${name%"$EMOJI_IDLE"}"
+		name="${name%"$EMOJI_QUESTION"}"
+		name="${name%"$EMOJI_PERMISSION"}"
+		name="${name%"$EMOJI_ANSWERED"}"
+		name="${name%"$EMOJI_ERROR"}"
+		name="${name%"$EMOJI_LEGACY_WORKING"}"
+		name="${name%🏗}"
+		name="${name%"$EMOJI_LEGACY_CHECK"}"
+		name="${name%"$EMOJI_LEGACY_ERROR"}"
+	done
+
+	echo "$name"
+}
+
+# Get target window ID
+_get_window_id() {
+	local window_name="${1:-${TMUX_AGENT_WINDOW:-}}"
+	local window_id="${2:-}"
+	local session
+	session=$(_get_session)
+
+	if [[ -n "$window_id" ]]; then
+		echo "$window_id"
+		return 0
+	fi
+
+	if [[ -n "$window_name" ]]; then
+		# Search by name, ignoring any existing status emoji suffix
+		local clean_target id name
+		clean_target=$(_strip_status "$window_name")
+		while IFS=' ' read -r id name; do
+			if [[ "$(_strip_status "$name")" == "$clean_target" ]]; then
+				echo "$id"
+				return 0
+			fi
+		done < <(tmux list-windows -t "$session" -F '#{window_id} #{window_name}' 2>/dev/null)
+		echo "Window '$clean_target' not found in session '$session'" >&2
+		return 1
+	fi
+
+	# Fall back to the window containing the pane this process runs in
+	if [[ -n "${TMUX_PANE:-}" ]]; then
+		tmux display-message -t "$TMUX_PANE" -p '#{window_id}'
+	elif [[ -n "${TMUX:-}" ]]; then
+		tmux display-message -p '#{window_id}'
+	else
+		tmux display-message -t "$session" -p '#{window_id}'
+	fi
+}
+
+# Add status emoji to the END of a window name
+_add_status() {
+	local name="$1"
+	local status="$2"
+	local suffix="${TMUX_AGENT_ID:-}"
+
+	case "$status" in
+	busy | working) echo "$name $EMOJI_BUSY${suffix:+ $suffix}" ;;
+	idle) echo "$name $EMOJI_IDLE${suffix:+ $suffix}" ;;
+	question) echo "$name $EMOJI_QUESTION${suffix:+ $suffix}" ;;
+	permission) echo "$name $EMOJI_PERMISSION${suffix:+ $suffix}" ;;
+	answered | check) echo "$name $EMOJI_ANSWERED${suffix:+ $suffix}" ;;
+	error) echo "$name $EMOJI_ERROR${suffix:+ $suffix}" ;;
+	clear | "") echo "$name" ;;
+	*) echo "$name $status${suffix:+ $suffix}" ;;
+	esac
+}
+
+# Subcommand: notify
+cmd_notify() {
+	local urgency="${1:-normal}"
+	local title="${2:-Notification}"
+	local message="${3:-}"
+	local session
+	session=$(_get_session)
+
+	case "$urgency" in
+	low)
+		local win_id
+		win_id=$(_get_window_id)
+
+		# skip if you're already looking at the agent's window
+		if [[ "$(tmux display-message -t "$win_id" -p '#{window_active}')" == "1" ]]; then
+			return 0
+		fi
+
+		tmux display-message -t "$session" "$title: $message"
+		;;
+	normal)
+		tmux display-popup -E -w 60% -h 30% -S "fg=yellow" -T "$title" \
+			bash -c "printf '%s\n' \"$message\"; read -rs -n1 -p 'Press any key...'"
+		;;
+	critical)
+		tmux display-popup -E -w 60% -h 30% -S "fg=red" -T "ALERT: $title" \
+			bash -c "printf '%s\n' \"$message\"; read -rs -n1 -p 'Press any key...'"
+		;;
+	*)
+		echo "Unknown urgency: $urgency" >&2
+		return 1
+		;;
+	esac
+}
+
+# Subcommand: status
+cmd_status() {
+	local status="${1:-}"
+	local window_name="${2:-${TMUX_AGENT_WINDOW:-}}"
+	local window_id="${3:-}"
+
+	if [[ -z "$status" ]]; then
+		echo "Usage: tmux-agent status [busy|idle|question|permission|answered|error|clear] [\"Window Name\"] [window-id]" >&2
+		return 1
+	fi
+
+	window_id=$(_get_window_id "$window_name" "$window_id")
+
+	local current_name clean_name new_name
+	current_name=$(tmux display-message -t "$window_id" -p '#{window_name}')
+	clean_name=$(_strip_status "$current_name")
+	new_name=$(_add_status "$clean_name" "$status")
+
+	# Prevent tmux from auto-renaming the window back
+	tmux set-option -w -t "$window_id" automatic-rename off 2>/dev/null || true
+	tmux rename-window -t "$window_id" "$new_name"
+}
+
+# Subcommand: status-clear
+cmd_status_clear() {
+	local window_name="${1:-${TMUX_AGENT_WINDOW:-}}"
+	local window_id="${2:-}"
+
+	window_id=$(_get_window_id "$window_name" "$window_id")
+
+	local current_name clean_name
+	current_name=$(tmux display-message -t "$window_id" -p '#{window_name}')
+	clean_name=$(_strip_status "$current_name")
+
+	tmux rename-window -t "$window_id" "$clean_name"
+}
+
+# Main
+case "${1:-}" in
+notify)
+	shift
+	cmd_notify "$@"
+	;;
+status)
+	shift
+	cmd_status "$@"
+	;;
+status-clear)
+	shift
+	cmd_status_clear "$@"
+	;;
+-h | --help | help)
+	sed -n '2,26p' "$0" | sed 's/^#\s*//'
+	;;
+*)
+	echo "Usage: tmux-agent {notify|status|status-clear|help} [args...]" >&2
+	exit 1
+	;;
+esac
