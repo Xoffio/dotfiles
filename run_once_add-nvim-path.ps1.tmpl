@@ -1,0 +1,10 @@
+{{- if eq .chezmoi.os "windows" }}
+$nvimBin = Join-Path $HOME ".local\share\nvim-app\bin"
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if (-not $userPath) { $userPath = "" }
+
+if (-not ($userPath -split ";" | Where-Object { $_ -eq $nvimBin })) {
+    [Environment]::SetEnvironmentVariable("Path", "$nvimBin;$userPath", "User")
+    Write-Host "Added $nvimBin to your permanent User PATH."
+}
+{{- end }}
