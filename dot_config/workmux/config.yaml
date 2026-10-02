@@ -1,0 +1,7 @@
+nerdfont: true
+agent: opencode
+
+panes:
+  - command: opencode
+    focus: true
+  - split: horizontal
