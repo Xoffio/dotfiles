@@ -1,0 +1,6 @@
+[".local/bin/workmux"]
+type = "archive-file"
+url = "https://github.com/raine/workmux/releases/download/v{{ .versions.workmux }}/workmux-{{ .chezmoi.os }}-{{ .chezmoi.arch }}.tar.gz"
+path = "workmux"
+executable = true
+checksum.sha256 = "{{ if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) }}c1b4ef8b40d38e03910760334301cc1dc77ef95145cd889cc3bc4e573568be1b{{ else if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `arm64`) }}e4d3fcc30fd52fcc006586fcc97bf43eb0a969ecb7e507a96b577c4ea1e6a5d3{{ else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `amd64`) }}4f8cff2347a984d89d3dfe030dea154698bc34ee9d96aff4c6b34917c035b60c{{ else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) }}75456e3bc739aaebfe0a93130d7c0cfd6b5b1912dcfbbe791fab5bb86fc4e622{{ end }}"
