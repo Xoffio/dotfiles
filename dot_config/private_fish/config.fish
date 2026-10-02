@@ -9,3 +9,5 @@ end
 if status is-interactive
     atuin init fish | source
 end
+
+alias wm workmux
