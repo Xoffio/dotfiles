@@ -1,0 +1,27 @@
+# OpenCode
+{{ $ocVersion := .versions.opencode -}}
+{{- $ocFile := "" -}}
+{{- $ocChecksum := "" -}}
+{{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $ocFile = "opencode-linux-x64.tar.gz" -}}
+  {{- $ocChecksum = "3046e0404fdc60fb80307e7a47824ba07477364178a4d09baa8548496dd6d43b" -}}
+{{- else if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $ocFile = "opencode-linux-arm64.tar.gz" -}}
+  {{- $ocChecksum = "568461b7d4d8c19865c97e9a1102e613049c6039d01fe772154de873c1865840" -}}
+{{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $ocFile = "opencode-darwin-x64-baseline.zip" -}}
+  {{- $ocChecksum = "3888d74f1478b94ab1682a7c30942ab53e1266329f3786cf05e499381572dea8" -}}
+{{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $ocFile = "opencode-darwin-arm64.zip" -}}
+  {{- $ocChecksum = "fa643f93401c13508d8d513780e54ce9cc01203d501114be9b88d62408b8101f" -}}
+{{- else if eq .chezmoi.os `windows` -}}
+  {{- $ocFile = "opencode-windows-x64-baseline.zip" -}}
+  {{- $ocChecksum = "cd852831bd094c2df2eb379eb98bed7a63db7f823a7caf277c732cdac33cbdb6" -}}
+{{- end }}
+
+[".local/bin/opencode{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
+    type = "archive-file"
+    url = "https://github.com/anomalyco/opencode/releases/download/v{{ $ocVersion }}/{{ $ocFile }}"
+    path = "opencode{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
+    executable = true
+    checksum.sha256 = "{{ $ocChecksum }}"

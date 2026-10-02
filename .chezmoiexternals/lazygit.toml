@@ -1,0 +1,6 @@
+[".local/bin/lazygit{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
+type = "archive-file"
+url = "https://github.com/jesseduffield/lazygit/releases/download/v{{ .versions.lazygit }}/lazygit_{{ .versions.lazygit }}_{{ .chezmoi.os }}_{{ if eq .chezmoi.arch `arm64` }}arm64{{ else }}x86_64{{ end }}.{{ if eq .chezmoi.os `windows` }}zip{{ else }}tar.gz{{ end }}"
+path = "lazygit{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
+executable = true
+checksum.sha256 = "{{ if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) }}02beacbcda0fa342e50ae3480ba8147307353af3fb28e1d5f790e02329c201a6{{ else if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `arm64`) }}49abecdf6adf4f2dfdb11bf7b9bfada267ea523612ed809d1c6d87f6c04000a7{{ else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `amd64`) }}fde13daf583511aa24c42ca154911643231a5af784c7cdd8117264b2fc035b33{{ else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) }}65a367c6ea9a88efebaaf7998a6835eedb987e04916cef677264ff9b31b1b13e{{ end }}"
