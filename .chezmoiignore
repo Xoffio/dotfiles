@@ -5,9 +5,11 @@ install.ps1
 # Ignore in OS that are not Windows
 {{- if ne .chezmoi.os "windows" }}
 Documents
+AppData
 {{- end }}
 
 # Ignore files in Windows
 {{- if eq .chezmoi.os "windows" }}
 .local/bin/nvim
+.config/alacritty/alacritty.toml
 {{- end }}

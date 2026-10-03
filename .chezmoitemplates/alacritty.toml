@@ -1,0 +1,12 @@
+[general]
+# Live config reload (updates your terminal instantly when you save this file)
+live_config_reload = true
+
+[window]
+opacity = 0.96
+
+[font]
+size = 13.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font Mono"
