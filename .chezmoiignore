@@ -12,4 +12,6 @@ AppData
 {{- if eq .chezmoi.os "windows" }}
 .local/bin/nvim
 .config/alacritty/alacritty.toml
+.config/fish
+.config/workmux
 {{- end }}
