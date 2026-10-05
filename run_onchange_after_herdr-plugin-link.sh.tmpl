@@ -1,0 +1,8 @@
+{{- if ne .chezmoi.os "windows" -}}
+#!/bin/bash
+# Re-link smart-splits herdr plugin when its path changes
+# Path: {{ joinPath .chezmoi.homeDir ".local" "share" "nvim" "lazy" "smart-splits.nvim" }}
+if command -v herdr >/dev/null && [ -d "$HOME/.local/share/nvim/lazy/smart-splits.nvim" ]; then
+  herdr plugin link "$HOME/.local/share/nvim/lazy/smart-splits.nvim" 2>/dev/null || true
+fi
+{{- end -}}

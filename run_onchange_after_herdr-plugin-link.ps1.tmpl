@@ -1,0 +1,9 @@
+{{- if eq .chezmoi.os "windows" -}}
+{{- $pluginPath := joinPath .chezmoi.homeDir "AppData" "Local" "nvim-data" "lazy" "smart-splits.nvim" -}}
+# Re-link smart-splits herdr plugin when its path changes
+# Path: {{ $pluginPath }}
+$pluginPath = "{{ $pluginPath }}"
+if ((Get-Command herdr -ErrorAction SilentlyContinue) -and (Test-Path $pluginPath -PathType Container)) {
+    try { herdr plugin link $pluginPath 2>$null } catch {}
+}
+{{- end -}}
