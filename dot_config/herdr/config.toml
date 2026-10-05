@@ -1,0 +1,44 @@
+onboarding = false
+
+[terminal]
+default_shell = "fish"
+
+[keys]
+split_vertical = "prefix+%"
+split_horizontal = 'prefix+"'
+rename_tab = "prefix+comma"
+focus_pane_left = "prefix+left"
+focus_pane_down = "prefix+down"
+focus_pane_up = "prefix+up"
+focus_pane_right = "prefix+right"
+# tmux-style pane resizing: prefix+Ctrl+Arrow (one step per prefix press)
+# For continuous resizing use resize mode (prefix+r), hold arrows, Esc/Enter to exit
+resize_pane_left = "prefix+ctrl+left"
+resize_pane_down = "prefix+ctrl+down"
+resize_pane_up = "prefix+ctrl+up"
+resize_pane_right = "prefix+ctrl+right"
+
+# Seamless nvim <-> herdr pane navigation via smart-splits.nvim's herdr plugin
+[[keys.command]]
+key = "ctrl+h"
+type = "plugin_action"
+command = "smart-splits.nvim.left"
+description = "navigate left (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+j"
+type = "plugin_action"
+command = "smart-splits.nvim.down"
+description = "navigate down (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+k"
+type = "plugin_action"
+command = "smart-splits.nvim.up"
+description = "navigate up (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+l"
+type = "plugin_action"
+command = "smart-splits.nvim.right"
+description = "navigate right (vim/herdr)"
