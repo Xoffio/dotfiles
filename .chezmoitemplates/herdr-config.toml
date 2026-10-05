@@ -1,7 +1,11 @@
 onboarding = false
 
 [terminal]
+{{- if eq .chezmoi.os "windows" }}
+default_shell = "powershell"
+{{- else }}
 default_shell = "fish"
+{{- end }}
 
 [keys]
 split_vertical = "prefix+%"
