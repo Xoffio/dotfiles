@@ -14,4 +14,6 @@ AppData
 .config/alacritty/alacritty.toml
 .config/fish
 .config/workmux
+.config/tmux
+.tmux.conf
 {{- end }}
