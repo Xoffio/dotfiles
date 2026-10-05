@@ -6,4 +6,4 @@ $pluginPath = "{{ $pluginPath }}"
 if ((Get-Command herdr -ErrorAction SilentlyContinue) -and (Test-Path $pluginPath -PathType Container)) {
     try { herdr plugin link $pluginPath 2>$null } catch {}
 }
-{{- end -}}
+{{- end }}
