@@ -2,6 +2,9 @@ fish_add_path ~/.local/bin
 
 set -U fish_greeting ""
 
+# Enable vi key bindings
+fish_vi_key_bindings
+
 if status is-interactive
 
     # Load the atuin shell integration if atuin is installed

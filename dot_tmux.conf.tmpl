@@ -8,7 +8,11 @@ set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'christoomey/vim-tmux-navigator'
 set -g @plugin 'wfxr/tmux-power'
 
-set -g @tmux_power_theme '#FFDA03' 
+{{ if stat "/maker" -}}
+set -g @tmux_power_theme 'violet'
+{{ else -}}
+set -g @tmux_power_theme '#FFDA03'
+{{ end }}
 
 # Truecolor passthrough
 set -ag terminal-overrides ",*:RGB"
@@ -45,6 +49,11 @@ bind Space display-menu \
   " Workmux Sidebar"    s "run-shell 'workmux sidebar'" \
   "" \
   "󱘖 Detach Session"     D "detach-client"
+
+{{ if lookPath "fish" }}
+# Set default shell to fish
+set -g default-shell {{ lookPath "fish" }}
+{{ end }}
 
 # This needs to be the last line
 run '~/.tmux/plugins/tpm/tpm'
