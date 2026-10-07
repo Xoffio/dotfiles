@@ -1,0 +1,16 @@
+{{ $spfVersion := .versions.superfile -}}
+{{- $spfChecksum := "" -}}
+{{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $spfChecksum = "d45b0e95072629a6aa7983a84eedca9cd7a98861e67ef91be1415496e3dda309" -}}
+{{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $spfChecksum = "131f654e7f8366fd37dbe9363739f8d82e57ff3f632f45963cd233c049cfad2a" -}}
+{{- else if eq .chezmoi.os `windows` -}}
+  {{- $spfChecksum = "4264a84d38c5d13804960a5da9ea8dedb8a00439e2612d6b8a28699836ed0143" -}}
+{{- end }}
+
+[".local/bin/spf{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
+    type = "archive-file"
+    url = "https://github.com/yorukot/superfile/releases/download/v{{ $spfVersion }}/superfile-{{ .chezmoi.os }}-v{{ $spfVersion }}-{{ .chezmoi.arch }}.{{ if eq .chezmoi.os `windows` }}zip{{ else }}tar.gz{{ end }}"
+    path = "./dist/superfile-{{ .chezmoi.os }}-v{{ $spfVersion }}-{{ .chezmoi.arch }}/spf{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
+    executable = true
+    checksum.sha256 = "{{ $spfChecksum }}"
