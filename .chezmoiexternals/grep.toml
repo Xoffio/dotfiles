@@ -1,0 +1,8 @@
+{{ if eq .chezmoi.os "windows" -}}
+[".local/bin/grep.exe"]
+type = "archive-file"
+url = "https://github.com/uutils/grep/releases/download/{{ .versions.uu_grep }}/uu_grep-x86_64-pc-windows-msvc.zip"
+path = "grep.exe"
+executable = true
+checksum.sha256 = "b364af18fb6367b41b6489a9d2f1e92c8fa80dc37af8aa4fece3293015f03871"
+{{- end }}
