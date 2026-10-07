@@ -1,22 +1,17 @@
 {{ $rgVersion := .versions.ripgrep -}}
 {{- $rgTriple := "" -}}
-{{- $rgChecksum := "" -}}
 {{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
   {{- $rgTriple = "x86_64-unknown-linux-musl" -}}
-  {{- $rgChecksum = "33e15bcf1624b25cdd2a55813a47a2f95dbe126268203e76aa6a585d1e7b149c" -}}
 {{- else if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `arm64`) -}}
   {{- $rgTriple = "aarch64-unknown-linux-gnu" -}}
-  {{- $rgChecksum = "a740b91c82eaf9914cfedd353572f2791cbe0162c84101ee0951058f4dcbc90d" -}}
 {{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `amd64`) -}}
   {{- $rgTriple = "x86_64-apple-darwin" -}}
-  {{- $rgChecksum = "af7825fcc69a2afc7a7aea55fc9af90e26421d8f20fe59df32e233c0b8a231c1" -}}
 {{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) -}}
   {{- $rgTriple = "aarch64-apple-darwin" -}}
-  {{- $rgChecksum = "3750b2e93f37e0c692657da574d7019a101c0084da05a790c83fd335bad973e4" -}}
 {{- else if eq .chezmoi.os `windows` -}}
   {{- $rgTriple = "x86_64-pc-windows-msvc" -}}
-  {{- $rgChecksum = "71b2fef860abe467217a538ff31de02f5258807c0129f771846f87bd029aafc5" -}}
 {{- end }}
+{{- $rgChecksum := index .hashes.ripgrep (printf "%s_%s" .chezmoi.os .chezmoi.arch) | default "" -}}
 
 [".local/bin/rg{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
     type = "archive-file"

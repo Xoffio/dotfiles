@@ -1,14 +1,12 @@
 # Herdr
 {{ $herdrVersion := .versions.herdr -}}
 {{- $herdrAsset := "" -}}
-{{- $herdrChecksum := "" -}}
 {{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
   {{- $herdrAsset = "herdr-linux-x86_64" -}}
-  {{- $herdrChecksum = "18a8dc65f1c2fa485884344356dea1cfd911c6f06cf46fa78e193f4087f4dba7" -}}
 {{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) -}}
   {{- $herdrAsset = "herdr-macos-aarch64" -}}
-  {{- $herdrChecksum = "5173a3e0ae42d5d1ab7ebfa5d5e6329f7c3d23f8e1a3677c7ce3231da2884157" -}}
 {{- end }}
+{{- $herdrChecksum := index .hashes.herdr (printf "%s_%s" .chezmoi.os .chezmoi.arch) | default "" -}}
 
 {{- if $herdrAsset }}
 
@@ -21,7 +19,7 @@
 
 {{- if and (eq .chezmoi.os `windows`) (eq .chezmoi.arch `amd64`) }}
 {{- $herdrWindowsUrl := printf "https://github.com/herdrdev/herdr/releases/download/v%s/herdr-windows-x86_64.zip" $herdrVersion -}}
-{{- $herdrWindowsChecksum := "c75b1fa49f7a3ba4b8b11789912a6147e4214a3b6fd3556d0f80076c8887d795" -}}
+{{- $herdrWindowsChecksum := .hashes.herdr.windows_amd64 -}}
 
 [".local/bin/herdr.exe"]
     type = "archive-file"
