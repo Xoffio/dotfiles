@@ -1,0 +1,4 @@
+packages:
+  windows:
+    winget:
+      - uutils.coreutils

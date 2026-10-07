@@ -1,0 +1,27 @@
+{{- if eq .chezmoi.os "windows" -}}
+# Install packages declared in .chezmoidata/packages.yaml (windows.winget).
+# Re-runs whenever the winget list changes.
+# winget packages hash: {{ .packages.windows.winget | toJson | sha256sum }}
+$ErrorActionPreference = "Continue"
+
+if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+    Write-Warning "winget not found; skipping package installs"
+    exit 0
+}
+
+$packages = @(
+{{- range .packages.windows.winget }}
+    "{{ . }}"
+{{- end }}
+)
+
+foreach ($pkg in $packages) {
+    $installed = winget list --id $pkg --exact --accept-source-agreements 2>$null | Select-String -SimpleMatch $pkg
+    if ($installed) {
+        Write-Host "already installed: $pkg"
+    } else {
+        Write-Host "installing: $pkg"
+        winget install --id $pkg --exact --silent --accept-package-agreements --accept-source-agreements
+    }
+}
+{{- end }}
