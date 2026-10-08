@@ -52,6 +52,9 @@ status_indicators = "symbols"
 
 [ui.sound]
 enabled = true
+path = "sounds/woo_vu_luvub_dub_dub.mp3"
+done_path = "sounds/oh_yeah.mp3"
+request_path = "sounds/i_want_you.mp3"
 
 [ui.toast]
 delivery = "herdr"
