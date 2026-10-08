@@ -46,3 +46,12 @@ key = "ctrl+l"
 type = "plugin_action"
 command = "smart-splits.nvim.right"
 description = "navigate right (vim/herdr)"
+
+[ui]
+status_indicators = "symbols"
+
+[ui.sound]
+enabled = true
+
+[ui.toast]
+delivery = "herdr"
