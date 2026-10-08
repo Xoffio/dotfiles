@@ -1,9 +1,0 @@
-{{ $spfVersion := .versions.superfile -}}
-{{- $spfChecksum := index .hashes.superfile (printf "%s_%s" .chezmoi.os .chezmoi.arch) | default "" -}}
-
-[".local/bin/spf{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
-    type = "archive-file"
-    url = "https://github.com/yorukot/superfile/releases/download/v{{ $spfVersion }}/superfile-{{ .chezmoi.os }}-v{{ $spfVersion }}-{{ .chezmoi.arch }}.{{ if eq .chezmoi.os `windows` }}zip{{ else }}tar.gz{{ end }}"
-    path = "./dist/superfile-{{ .chezmoi.os }}-v{{ $spfVersion }}-{{ .chezmoi.arch }}/spf{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
-    executable = true
-    checksum.sha256 = "{{ $spfChecksum }}"
