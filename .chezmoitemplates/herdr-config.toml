@@ -21,6 +21,7 @@ resize_pane_left = "prefix+ctrl+left"
 resize_pane_down = "prefix+ctrl+down"
 resize_pane_up = "prefix+ctrl+up"
 resize_pane_right = "prefix+ctrl+right"
+remove_worktree = "prefix+d"
 
 # Seamless nvim <-> herdr pane navigation via smart-splits.nvim's herdr plugin
 [[keys.command]]
