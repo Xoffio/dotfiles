@@ -48,6 +48,15 @@ type = "plugin_action"
 command = "smart-splits.nvim.right"
 description = "navigate right (vim/herdr)"
 
+# Fuzzy content search with television (ripgrep channel)
+[[keys.command]]
+key = "prefix+f"
+type = "popup"
+command = "tv text-rg"
+width = "80%"
+height = "80%"
+description = "find in files (tv + ripgrep)"
+
 [ui]
 status_indicators = "symbols"
 
