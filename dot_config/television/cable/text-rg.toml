@@ -22,10 +22,11 @@ offset = "{strip_ansi|split:\\::1}"
 enter = "actions:edit"
 
 [preview.env]
-BAT_THEME = "GitHub"
+BAT_THEME = "Astrodark"
 
 [ui.preview_panel]
 header = "{strip_ansi|split:\\::..2}"
+border_type = "rounded"
 
 [actions.edit]
 description = "Open file in neovim at line"
