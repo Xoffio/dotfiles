@@ -59,6 +59,8 @@ description = "find in files (tv + ripgrep)"
 
 [ui]
 status_indicators = "symbols"
+# Use the native cursor instead of the block cursor for the host terminal.
+host_cursor = "native"
 
 [ui.sound]
 enabled = true
