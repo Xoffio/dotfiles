@@ -13,13 +13,16 @@ if status is-interactive
 
     # Load fzf key bindings and fuzzy completion
     if command -q fzf
-        fzf --fish | source
+        set -l v (string split . $version)
+        if test $v[1] -gt 3; or begin; test $v[1] -eq 3; and test $v[2] -ge 4; end
+            fzf --fish | source
 
-        # Preview files with bat + file type header (Ctrl-T)
-        set -gx FZF_CTRL_T_OPTS "--preview 'bat -n --color=always {}' --bind 'focus:+transform-header:file --brief {} || echo \"No file selected\"'"
+            # Preview files with bat + file type header (Ctrl-T)
+            set -gx FZF_CTRL_T_OPTS "--preview 'bat -n --color=always {}' --bind 'focus:+transform-header:file --brief {} || echo \"No file selected\"'"
 
-        # Use full preset style with colors (Shift-Tab)
-        set -gx FZF_DEFAULT_OPTS "--style full --border --padding 1,2 --color 'border:#aaaaaa,label:#cccccc' --color 'preview-border:#9999cc,preview-label:#ccccff' --color 'list-border:#669966,list-label:#99cc99' --color 'input-border:#996666,input-label:#ffcccc' --color 'header-border:#6699cc,header-label:#99ccff'"
+            # Use full preset style with colors (Shift-Tab)
+            set -gx FZF_DEFAULT_OPTS "--style full --border --padding 1,2 --color 'border:#aaaaaa,label:#cccccc' --color 'preview-border:#9999cc,preview-label:#ccccff' --color 'list-border:#669966,list-label:#99cc99' --color 'input-border:#996666,input-label:#ffcccc' --color 'header-border:#6699cc,header-label:#99ccff'"
+        end
     end
 end
 
