@@ -1,6 +1,6 @@
 [".local/bin/lazygit{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
 type = "archive-file"
-url = "https://github.com/jesseduffield/lazygit/releases/download/v{{ .versions.lazygit }}/lazygit_{{ .versions.lazygit }}_{{ .chezmoi.os }}_{{ if eq .chezmoi.arch `arm64` }}arm64{{ else }}x86_64{{ end }}.{{ if eq .chezmoi.os `windows` }}zip{{ else }}tar.gz{{ end }}"
+url = "https://github.com/jesseduffield/lazygit/releases/download/v{{ .tools.lazygit.version }}/lazygit_{{ .tools.lazygit.version }}_{{ .chezmoi.os }}_{{ if eq .chezmoi.arch `arm64` }}arm64{{ else }}x86_64{{ end }}.{{ if eq .chezmoi.os `windows` }}zip{{ else }}tar.gz{{ end }}"
 path = "lazygit{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
 executable = true
 checksum.sha256 = "{{ index .hashes.lazygit (printf "%s_%s" .chezmoi.os .chezmoi.arch) }}"

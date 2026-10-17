@@ -16,9 +16,9 @@ args = ["--rebase", "--autostash"]
 [".local/share/nvim-app"]
 type = "archive"
 {{ if $oldLinux -}}
-url = "https://github.com/neovim/neovim-releases/releases/download/v{{ .versions.neovim }}/nvim-linux-{{ if eq .chezmoi.arch `arm64` }}arm64{{ else }}x86_64{{ end }}.tar.gz"
+url = "https://github.com/neovim/neovim-releases/releases/download/v{{ .tools.neovim.version }}/nvim-linux-{{ if eq .chezmoi.arch `arm64` }}arm64{{ else }}x86_64{{ end }}.tar.gz"
 {{ else -}}
-url = "https://github.com/neovim/neovim/releases/download/v{{ .versions.neovim }}/nvim-{{ if eq .chezmoi.os `darwin` }}macos{{ else }}linux{{ end }}-{{ if eq .chezmoi.arch `arm64` }}arm64{{ else }}x86_64{{ end }}.tar.gz"
+url = "https://github.com/neovim/neovim/releases/download/v{{ .tools.neovim.version }}/nvim-{{ if eq .chezmoi.os `darwin` }}macos{{ else }}linux{{ end }}-{{ if eq .chezmoi.arch `arm64` }}arm64{{ else }}x86_64{{ end }}.tar.gz"
 {{ end -}}
 exact = true
 stripComponents = 1

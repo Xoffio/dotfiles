@@ -1,5 +1,5 @@
 # OpenCode
-{{ $ocVersion := .versions.opencode -}}
+{{ $ocVersion := .tools.opencode.version -}}
 {{- $ocFile := "" -}}
 {{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
   {{- $ocFile = "opencode-linux-x64.tar.gz" -}}

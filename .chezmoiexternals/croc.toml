@@ -1,4 +1,4 @@
-{{ $crocVersion := .versions.croc -}}
+{{ $crocVersion := .tools.croc.version -}}
 {{- $crocFile := "" -}}
 {{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
   {{- $crocFile = "Linux-64bit.tar.gz" -}}

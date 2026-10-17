@@ -18,7 +18,7 @@
    unzip -l <app>-windows.zip
    ```
 5. **Create `.chezmoiexternals/<app>.toml`** — see `bat.toml` for nested folders, `fzf.toml` for flat
-6. **Add version** to `.chezmoidata/versions.toml`
+6. **Add version + repo** to `.chezmoidata/tools.toml`
 7. **Add hashes** to `.chezmoidata/hashes.toml`
 8. **Verify**: `chezmoi execute-template < .chezmoiexternals/<app>.toml`
 9. **Clean up**: `rm -rf /tmp/opencode/<app>-checksums`
@@ -34,5 +34,5 @@
 ## Key files
 
 - `.chezmoiexternals/` — external tool definitions
-- `.chezmoidata/versions.toml` — tool versions
+- `.chezmoidata/tools.toml` — tool versions + GitHub repos (`owner/name`)
 - `.chezmoidata/hashes.toml` — SHA256 checksums

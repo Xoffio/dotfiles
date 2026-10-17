@@ -1,6 +1,6 @@
 [".local/bin/fzf{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
 type = "archive-file"
-url = "https://github.com/junegunn/fzf/releases/download/v{{ .versions.fzf }}/fzf-{{ .versions.fzf }}-{{ .chezmoi.os }}_{{ .chezmoi.arch }}.{{ if eq .chezmoi.os `windows` }}zip{{ else }}tar.gz{{ end }}"
+url = "https://github.com/junegunn/fzf/releases/download/v{{ .tools.fzf.version }}/fzf-{{ .tools.fzf.version }}-{{ .chezmoi.os }}_{{ .chezmoi.arch }}.{{ if eq .chezmoi.os `windows` }}zip{{ else }}tar.gz{{ end }}"
 path = "fzf{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
 executable = true
 checksum.sha256 = "{{ index .hashes.fzf (printf "%s_%s" .chezmoi.os .chezmoi.arch) }}"

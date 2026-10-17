@@ -1,4 +1,4 @@
-{{ $rgVersion := .versions.ripgrep -}}
+{{ $rgVersion := .tools.ripgrep.version -}}
 {{- $rgTriple := "" -}}
 {{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
   {{- $rgTriple = "x86_64-unknown-linux-musl" -}}

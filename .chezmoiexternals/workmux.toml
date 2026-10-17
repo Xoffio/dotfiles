@@ -1,7 +1,7 @@
 {{ if ne .chezmoi.os "windows" }}
 [".local/bin/workmux"]
 type = "archive-file"
-url = "https://github.com/raine/workmux/releases/download/v{{ .versions.workmux }}/workmux-{{ .chezmoi.os }}-{{ .chezmoi.arch }}.tar.gz"
+url = "https://github.com/raine/workmux/releases/download/v{{ .tools.workmux.version }}/workmux-{{ .chezmoi.os }}-{{ .chezmoi.arch }}.tar.gz"
 path = "workmux"
 executable = true
 checksum.sha256 = "{{ index .hashes.workmux (printf "%s_%s" .chezmoi.os .chezmoi.arch) }}"

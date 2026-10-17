@@ -1,0 +1,57 @@
+[tools]
+
+[tools.atuin]
+version = "18.23.0"
+repo = "atuinsh/atuin"
+
+[tools.bat]
+version = "0.26.1"
+repo = "sharkdp/bat"
+
+[tools.croc]
+version = "11.5.4"
+repo = "schollz/croc"
+
+[tools.fd]
+version = "10.5.0"
+repo = "sharkdp/fd"
+
+[tools.fzf]
+version = "0.74.5"
+repo = "junegunn/fzf"
+
+[tools.herdr]
+version = "0.9.3"
+repo = "herdrdev/herdr"
+
+[tools.jq]
+version = "1.8.2"
+repo = "jqlang/jq"
+
+[tools.lazygit]
+version = "0.65.1"
+repo = "jesseduffield/lazygit"
+
+[tools.neovim]
+version = "0.12.5"
+repo = "neovim/neovim"
+
+[tools.opencode]
+version = "1.19.0"
+repo = "anomalyco/opencode"
+
+[tools.ripgrep]
+version = "15.2.0"
+repo = "burntsushi/ripgrep"
+
+[tools.tv]
+version = "0.15.9"
+repo = "alexpasmantier/television"
+
+[tools.uu_grep]
+version = "0.2.0"
+repo = "uutils/grep"
+
+[tools.workmux]
+version = "0.1.269"
+repo = "raine/workmux"
