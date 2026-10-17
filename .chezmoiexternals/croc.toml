@@ -1,0 +1,17 @@
+{{ $crocVersion := .versions.croc -}}
+{{- $crocFile := "" -}}
+{{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $crocFile = "Linux-64bit.tar.gz" -}}
+{{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $crocFile = "macOS-ARM64.tar.gz" -}}
+{{- else if and (eq .chezmoi.os `windows`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $crocFile = "Windows-64bit.zip" -}}
+{{- end }}
+{{- $crocChecksum := index .hashes.croc (printf "%s_%s" .chezmoi.os .chezmoi.arch) | default "" -}}
+
+[".local/bin/croc{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
+    type = "archive-file"
+    url = "https://github.com/schollz/croc/releases/download/v{{ $crocVersion }}/croc_v{{ $crocVersion }}_{{ $crocFile }}"
+    path = "croc{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
+    executable = true
+    checksum.sha256 = "{{ $crocChecksum }}"
