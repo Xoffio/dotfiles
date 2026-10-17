@@ -55,3 +55,7 @@ repo = "uutils/grep"
 [tools.workmux]
 version = "0.1.269"
 repo = "raine/workmux"
+
+[tools.yq]
+version = "4.54.1"
+repo = "mikefarah/yq"
