@@ -31,5 +31,5 @@ border_type = "rounded"
 [actions.edit]
 description = "Open file in neovim at line"
 command = "nvim '+{strip_ansi|split:\\::1}' '{strip_ansi|split:\\::0}'"
-shell = "bash"
+shell = "{{ if eq .chezmoi.os `windows` }}powershell{{ else }}bash{{ end }}"
 mode = "execute"

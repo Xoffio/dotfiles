@@ -14,6 +14,7 @@ AppData
 .local/bin/nvim
 .config/alacritty/alacritty.toml
 .config/fish
+.config/television
 .config/workmux
 .config/tmux
 .tmux.conf
