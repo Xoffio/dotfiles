@@ -18,22 +18,26 @@ $leaf = Split-Path $full -Leaf
 
 Clear-Host
 Write-Host "Archiving $leaf -> $archive"
-Push-Location $parent
-try {
-    tar.exe -czf $archive $leaf
-} finally {
-    Pop-Location
-}
 
-if (Test-Path $archive) {
+try {
+    Push-Location $parent
+    try {
+        tar.exe -czf $archive $leaf
+        if ($LASTEXITCODE -ne 0) { throw "tar exited with $LASTEXITCODE" }
+    } finally {
+        Pop-Location
+    }
+
     if ($Qr) {
         croc send --qr $archive
     } else {
         croc send $archive
     }
+} catch {
+    Write-Host "ERROR: $_"
+} finally {
+    # Always clean up the temp archive, even on failure or Ctrl+C
     Remove-Item $archive -ErrorAction SilentlyContinue
-} else {
-    Write-Host "ERROR: archive was not created"
 }
 
 Write-Host ""
