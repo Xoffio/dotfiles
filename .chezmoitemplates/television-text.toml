@@ -40,7 +40,7 @@ mode = "execute"
 description = "Send selected files with croc"
 {{ if eq .chezmoi.os `windows` -}}
 # Quote the extracted path; cmd pause works in non-interactive PowerShell
-command = "Clear-Host; croc send \"{strip_ansi|split:\\::0}\" ; cmd /c pause"
+command = "Clear-Host; croc send '{strip_ansi|split:\\::0}'; cmd /c pause"
 shell = "powershell"
 {{ else -}}
 command = "croc send {strip_ansi|split:\\::0}; echo; read -r -p 'Press enter to continue...'"
@@ -51,7 +51,7 @@ mode = "execute"
 [actions.croc_send_qr]
 description = "Send with croc + QR code"
 {{ if eq .chezmoi.os `windows` -}}
-command = "Clear-Host; croc send --qr \"{strip_ansi|split:\\::0}\" ; cmd /c pause"
+command = "Clear-Host; croc send --qr '{strip_ansi|split:\\::0}'; cmd /c pause"
 shell = "powershell"
 {{ else -}}
 command = "croc send --qr {strip_ansi|split:\\::0}; echo; read -r -p 'Press enter to continue...'"
