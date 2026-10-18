@@ -1,65 +1,180 @@
 [tools]
 
+# dotup section: [tools.<name>.dotup.assets] maps a hashes.toml platform key
+# (<os>_<arch>, chezmoi-style) to an anchored, version-independent regex that
+# matches exactly ONE asset filename in the repo's release. dotup warns on
+# zero or multiple matches — never guesses.
+#
+# Tools without a dotup section are version-checked only (see neovim note at
+# the bottom).
+
 [tools.atuin]
 version = "18.23.0"
 repo = "atuinsh/atuin"
+
+[tools.atuin.dotup.assets]
+linux_amd64   = "^atuin-x86_64-unknown-linux-musl\\.tar\\.gz$"
+linux_arm64   = "^atuin-aarch64-unknown-linux-musl\\.tar\\.gz$"
+darwin_amd64  = "^atuin-x86_64-apple-darwin\\.tar\\.gz$"
+darwin_arm64  = "^atuin-aarch64-apple-darwin\\.tar\\.gz$"
+windows_amd64 = "^atuin-x86_64-pc-windows-msvc\\.zip$"
 
 [tools.bat]
 version = "0.26.1"
 repo = "sharkdp/bat"
 
+[tools.bat.dotup.assets]
+linux_amd64   = "^bat-v[0-9.]+-x86_64-unknown-linux-musl\\.tar\\.gz$"
+linux_arm64   = "^bat-v[0-9.]+-aarch64-unknown-linux-gnu\\.tar\\.gz$"
+darwin_amd64  = "^bat-v[0-9.]+-x86_64-apple-darwin\\.tar\\.gz$"
+darwin_arm64  = "^bat-v[0-9.]+-aarch64-apple-darwin\\.tar\\.gz$"
+windows_amd64 = "^bat-v[0-9.]+-x86_64-pc-windows-msvc\\.zip$"
+
 [tools.croc]
 version = "11.5.4"
 repo = "schollz/croc"
+
+[tools.croc.dotup.assets]
+linux_amd64   = "^croc_v[0-9.]+_Linux-64bit\\.tar\\.gz$"
+linux_arm64   = "^croc_v[0-9.]+_Linux-ARM64\\.tar\\.gz$"
+darwin_amd64  = "^croc_v[0-9.]+_macOS-64bit\\.tar\\.gz$"
+darwin_arm64  = "^croc_v[0-9.]+_macOS-ARM64\\.tar\\.gz$"
+windows_amd64 = "^croc_v[0-9.]+_Windows-64bit\\.zip$"
 
 [tools.fd]
 version = "10.5.0"
 repo = "sharkdp/fd"
 
+[tools.fd.dotup.assets]
+linux_amd64   = "^fd-v[0-9.]+-x86_64-unknown-linux-musl\\.tar\\.gz$"
+linux_arm64   = "^fd-v[0-9.]+-aarch64-unknown-linux-gnu\\.tar\\.gz$"
+darwin_amd64  = "^fd-v[0-9.]+-x86_64-apple-darwin\\.tar\\.gz$"
+darwin_arm64  = "^fd-v[0-9.]+-aarch64-apple-darwin\\.tar\\.gz$"
+windows_amd64 = "^fd-v[0-9.]+-x86_64-pc-windows-msvc\\.zip$"
+
 [tools.fzf]
 version = "0.74.5"
 repo = "junegunn/fzf"
 
+[tools.fzf.dotup.assets]
+linux_amd64   = "^fzf-[0-9.]+-linux_amd64\\.tar\\.gz$"
+linux_arm64   = "^fzf-[0-9.]+-linux_arm64\\.tar\\.gz$"
+darwin_amd64  = "^fzf-[0-9.]+-darwin_amd64\\.tar\\.gz$"
+darwin_arm64  = "^fzf-[0-9.]+-darwin_arm64\\.tar\\.gz$"
+windows_amd64 = "^fzf-[0-9.]+-windows_amd64\\.zip$"
+
+# herdr ships bare binaries on linux/macos, zip on windows.
 [tools.herdr]
-version = "0.9.3"
+version = "0.9.5"
 repo = "herdrdev/herdr"
+
+[tools.herdr.dotup.assets]
+linux_amd64   = "^herdr-linux-x86_64$"
+darwin_arm64  = "^herdr-macos-aarch64$"
+windows_amd64 = "^herdr-windows-x86_64\\.zip$"
 
 [tools.jq]
 version = "1.8.2"
 repo = "jqlang/jq"
 
+[tools.jq.dotup.assets]
+linux_amd64   = "^jq-linux-amd64$"
+linux_arm64   = "^jq-linux-arm64$"
+darwin_amd64  = "^jq-macos-amd64$"
+darwin_arm64  = "^jq-macos-arm64$"
+windows_amd64 = "^jq-windows-amd64\\.exe$"
+
+# lazygit uses x86_64 (not amd64) in asset names.
 [tools.lazygit]
 version = "0.65.1"
 repo = "jesseduffield/lazygit"
 
+[tools.lazygit.dotup.assets]
+linux_amd64   = "^lazygit_[0-9.]+_linux_x86_64\\.tar\\.gz$"
+linux_arm64   = "^lazygit_[0-9.]+_linux_arm64\\.tar\\.gz$"
+darwin_amd64  = "^lazygit_[0-9.]+_darwin_x86_64\\.tar\\.gz$"
+darwin_arm64  = "^lazygit_[0-9.]+_darwin_arm64\\.tar\\.gz$"
+windows_amd64 = "^lazygit_[0-9.]+_windows_x86_64\\.zip$"
+
+# EDGE CASE: neovim has no dotup section on purpose. Its external downloads
+# from two different repos depending on the machine's glibc (neovim/neovim for
+# glibc >= 2.29, neovim/neovim-releases for older) and has no checksum today.
+# dotup version-checks it against neovim/neovim and never touches hashes.
 [tools.neovim]
 version = "0.12.5"
 repo = "neovim/neovim"
 
 [tools.opencode]
-version = "1.19.0"
+version = "1.19.3"
 repo = "anomalyco/opencode"
+
+[tools.opencode.dotup.assets]
+linux_amd64   = "^opencode-linux-x64\\.tar\\.gz$"
+linux_arm64   = "^opencode-linux-arm64\\.tar\\.gz$"
+darwin_amd64  = "^opencode-darwin-x64-baseline\\.zip$"
+darwin_arm64  = "^opencode-darwin-arm64\\.zip$"
+windows_amd64 = "^opencode-windows-x64-baseline\\.zip$"
 
 [tools.ripgrep]
 version = "15.2.0"
 repo = "burntsushi/ripgrep"
 
+[tools.ripgrep.dotup.assets]
+linux_amd64   = "^ripgrep-[0-9.]+-x86_64-unknown-linux-musl\\.tar\\.gz$"
+linux_arm64   = "^ripgrep-[0-9.]+-aarch64-unknown-linux-gnu\\.tar\\.gz$"
+darwin_amd64  = "^ripgrep-[0-9.]+-x86_64-apple-darwin\\.tar\\.gz$"
+darwin_arm64  = "^ripgrep-[0-9.]+-aarch64-apple-darwin\\.tar\\.gz$"
+windows_amd64 = "^ripgrep-[0-9.]+-x86_64-pc-windows-msvc\\.zip$"
+
 [tools.sendme]
 version = "0.37.0"
 repo = "n0-computer/sendme"
+
+[tools.sendme.dotup.assets]
+linux_amd64   = "^sendme-v[0-9.]+-linux-x86_64\\.tar\\.gz$"
+linux_arm64   = "^sendme-v[0-9.]+-linux-aarch64\\.tar\\.gz$"
+darwin_amd64  = "^sendme-v[0-9.]+-darwin-x86_64\\.tar\\.gz$"
+darwin_arm64  = "^sendme-v[0-9.]+-darwin-aarch64\\.tar\\.gz$"
+windows_amd64 = "^sendme-v[0-9.]+-windows-x86_64\\.zip$"
 
 [tools.tv]
 version = "0.15.9"
 repo = "alexpasmantier/television"
 
+[tools.tv.dotup.assets]
+linux_amd64   = "^tv-[0-9.]+-x86_64-unknown-linux-musl\\.tar\\.gz$"
+linux_arm64   = "^tv-[0-9.]+-aarch64-unknown-linux-gnu\\.tar\\.gz$"
+darwin_amd64  = "^tv-[0-9.]+-x86_64-apple-darwin\\.tar\\.gz$"
+darwin_arm64  = "^tv-[0-9.]+-aarch64-apple-darwin\\.tar\\.gz$"
+windows_amd64 = "^tv-[0-9.]+-x86_64-pc-windows-msvc\\.zip$"
+
+# uu_grep is windows-only in .chezmoiexternals/grep.toml.
 [tools.uu_grep]
 version = "0.2.0"
 repo = "uutils/grep"
 
+[tools.uu_grep.dotup.assets]
+windows_amd64 = "^uu_grep-x86_64-pc-windows-msvc\\.zip$"
+
+# workmux has no windows build.
 [tools.workmux]
 version = "0.1.269"
 repo = "raine/workmux"
 
+[tools.workmux.dotup.assets]
+linux_amd64  = "^workmux-linux-amd64\\.tar\\.gz$"
+linux_arm64  = "^workmux-linux-arm64\\.tar\\.gz$"
+darwin_amd64 = "^workmux-darwin-amd64\\.tar\\.gz$"
+darwin_arm64 = "^workmux-darwin-arm64\\.tar\\.gz$"
+
+# yq matches the bare binary (what yq.toml downloads), not the .tar.gz wrapper.
 [tools.yq]
 version = "4.54.1"
 repo = "mikefarah/yq"
+
+[tools.yq.dotup.assets]
+linux_amd64   = "^yq_linux_amd64$"
+linux_arm64   = "^yq_linux_arm64$"
+darwin_amd64  = "^yq_darwin_amd64$"
+darwin_arm64  = "^yq_darwin_arm64$"
+windows_amd64 = "^yq_windows_amd64\\.exe$"
