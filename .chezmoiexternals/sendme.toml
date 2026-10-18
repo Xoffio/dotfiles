@@ -1,0 +1,21 @@
+{{ $smVersion := .tools.sendme.version -}}
+{{- $smTriple := "" -}}
+{{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $smTriple = "linux-x86_64" -}}
+{{- else if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $smTriple = "linux-aarch64" -}}
+{{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $smTriple = "darwin-x86_64" -}}
+{{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $smTriple = "darwin-aarch64" -}}
+{{- else if eq .chezmoi.os `windows` -}}
+  {{- $smTriple = "windows-x86_64" -}}
+{{- end }}
+{{- $smChecksum := index .hashes.sendme (printf "%s_%s" .chezmoi.os .chezmoi.arch) | default "" -}}
+
+[".local/bin/sendme{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
+    type = "archive-file"
+    url = "https://github.com/n0-computer/sendme/releases/download/v{{ $smVersion }}/sendme-v{{ $smVersion }}-{{ $smTriple }}.{{ if eq .chezmoi.os `windows` }}zip{{ else }}tar.gz{{ end }}"
+    path = "{{ if eq .chezmoi.os `windows` }}sendme.exe{{ else }}./sendme{{ end }}"
+    executable = true
+    checksum.sha256 = "{{ $smChecksum }}"

@@ -19,6 +19,7 @@ f12 = "actions:edit"
 ctrl-up = "actions:goto_parent_dir"
 alt-s = "actions:croc_send"
 alt-q = "actions:croc_send_qr"
+alt-d = "actions:sendme_send"
 
 [actions.edit]
 description = "Opens the selected entries with the default editor (falls back to vim)"
@@ -51,6 +52,17 @@ command = "Clear-Host; croc send --qr {}; cmd /c pause"
 shell = "powershell"
 {{ else -}}
 command = "croc send --qr {}; echo; read -r -p 'Press enter to continue...'"
+shell = "bash"
+{{ end -}}
+mode = "execute"
+
+[actions.sendme_send]
+description = "Send selected files with sendme"
+{{ if eq .chezmoi.os `windows` -}}
+command = "Clear-Host; sendme send {}; cmd /c pause"
+shell = "powershell"
+{{ else -}}
+command = "sendme send {}; echo; read -r -p 'Press enter to continue...'"
 shell = "bash"
 {{ end -}}
 mode = "execute"
