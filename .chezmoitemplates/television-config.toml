@@ -142,8 +142,9 @@ ctrl-down = "select_next_history"
 
 # Multi-selection
 # --------------
-tab = "toggle_selection"
-backtab = "toggle_selection_all"
+# NOTE: do NOT bind tab/backtab explicitly — in tv 0.15.9, binding tab breaks
+# toggle_selection (defaults work only when left undefined). Defaults are:
+# tab = toggle_selection, backtab = toggle_selection_all
 enter = "confirm_selection"
 
 # Preview panel control

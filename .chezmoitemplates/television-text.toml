@@ -1,5 +1,5 @@
 [metadata]
-name = "text-rg"
+name = "text"
 description = "A channel to find and select text from files"
 requirements = ["rg", "bat"]
 
@@ -20,6 +20,8 @@ offset = "{strip_ansi|split:\\::1}"
 
 [keybindings]
 enter = "actions:edit"
+alt-s = "actions:croc_send"
+alt-q = "actions:croc_send_qr"
 
 [preview.env]
 BAT_THEME = "Astrodark"
@@ -32,4 +34,26 @@ border_type = "rounded"
 description = "Open file in neovim at line"
 command = "nvim '+{strip_ansi|split:\\::1}' '{strip_ansi|split:\\::0}'"
 shell = "{{ if eq .chezmoi.os `windows` }}powershell{{ else }}bash{{ end }}"
+mode = "execute"
+
+[actions.croc_send]
+description = "Send selected files with croc"
+{{ if eq .chezmoi.os `windows` -}}
+command = "croc send {strip_ansi|split:\\::0}; Write-Host ''; Read-Host 'Press enter to continue'"
+shell = "powershell"
+{{ else -}}
+command = "croc send {strip_ansi|split:\\::0}; echo; read -r -p 'Press enter to continue...'"
+shell = "bash"
+{{ end -}}
+mode = "execute"
+
+[actions.croc_send_qr]
+description = "Send with croc + QR code"
+{{ if eq .chezmoi.os `windows` -}}
+command = "croc send --qr {strip_ansi|split:\\::0}; Write-Host ''; Read-Host 'Press enter to continue'"
+shell = "powershell"
+{{ else -}}
+command = "croc send --qr {strip_ansi|split:\\::0}; echo; read -r -p 'Press enter to continue...'"
+shell = "bash"
+{{ end -}}
 mode = "execute"

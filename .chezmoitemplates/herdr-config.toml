@@ -52,10 +52,19 @@ description = "navigate right (vim/herdr)"
 [[keys.command]]
 key = "prefix+f"
 type = "popup"
-command = "tv text-rg"
+command = "tv text"
 width = "80%"
 height = "80%"
 description = "find in files (tv + ripgrep)"
+
+# Television channel picker
+[[keys.command]]
+key = "prefix+t"
+type = "popup"
+command = "tv --show-remote"
+width = "80%"
+height = "80%"
+description = "tv channel list"
 
 [ui]
 status_indicators = "symbols"
