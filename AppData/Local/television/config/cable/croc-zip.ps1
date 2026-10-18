@@ -5,9 +5,9 @@ param(
     [switch]$Qr
 )
 
-# tv passes the path single-quoted with a possible trailing backslash,
-# e.g. 'config\'
-$dir = $Path.Trim("'").TrimEnd("\")
+# tv's substitution plus Windows argv parsing can leave any of ' " \ stuck
+# to the ends of the path. Strip all of them.
+$dir = $Path.Trim("'", '"', "\")
 $name = Split-Path $dir -Leaf
 if (-not $name) { $name = "croc-send" }
 $archive = Join-Path $env:TEMP "$name.tar.gz"
