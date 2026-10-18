@@ -57,7 +57,7 @@ shell = "bash"
 mode = "execute"
 
 [actions.sendme_send]
-description = "Send selected files with sendme"
+description = "Send with sendme (P2P direct when possible, relay fallback. Often faster than croc)"
 {{ if eq .chezmoi.os `windows` -}}
 command = "Clear-Host; sendme send {}; cmd /c pause"
 shell = "powershell"
