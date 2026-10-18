@@ -39,7 +39,8 @@ mode = "execute"
 [actions.croc_send]
 description = "Send selected files with croc"
 {{ if eq .chezmoi.os `windows` -}}
-command = "croc send {strip_ansi|split:\\::0}; Write-Host ''; Read-Host 'Press enter to continue'"
+# Strip tv's single quotes; cmd pause works in non-interactive PowerShell
+command = "$f = '{strip_ansi|split:\\::0}' -replace \"'\", ''; croc send $f; cmd /c pause"
 shell = "powershell"
 {{ else -}}
 command = "croc send {strip_ansi|split:\\::0}; echo; read -r -p 'Press enter to continue...'"
@@ -50,7 +51,7 @@ mode = "execute"
 [actions.croc_send_qr]
 description = "Send with croc + QR code"
 {{ if eq .chezmoi.os `windows` -}}
-command = "croc send --qr {strip_ansi|split:\\::0}; Write-Host ''; Read-Host 'Press enter to continue'"
+command = "$f = '{strip_ansi|split:\\::0}' -replace \"'\", ''; croc send --qr $f; cmd /c pause"
 shell = "powershell"
 {{ else -}}
 command = "croc send --qr {strip_ansi|split:\\::0}; echo; read -r -p 'Press enter to continue...'"

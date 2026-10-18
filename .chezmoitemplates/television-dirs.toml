@@ -43,7 +43,9 @@ mode = "execute"
 [actions.croc_send]
 description = "Send selected directories with croc"
 {{ if eq .chezmoi.os `windows` -}}
-command = "croc send {}; Write-Host ''; Read-Host 'Press enter to continue'"
+# tv passes paths single-quoted; strip the quotes for native exe args.
+# Read-Host fails in tv's non-interactive PowerShell, so use cmd's pause.
+command = "$dirs = {} -replace \"'\", ''; croc send $dirs; cmd /c pause"
 shell = "powershell"
 {{ else -}}
 command = "croc send {}; echo; read -r -p 'Press enter to continue...'"
@@ -54,8 +56,8 @@ mode = "execute"
 [actions.croc_send_qr]
 description = "Archive selection into one tar.gz, then send with croc + QR code"
 {{ if eq .chezmoi.os `windows` -}}
-# Name the archive after the first selected folder
-command = "$sel = '{}'; if ($sel -match \"'([^']+)'\") { $name = Split-Path $Matches[1] -Leaf } else { $name = 'croc-send' }; $archive = Join-Path $env:TEMP \"$name.tar.gz\"; tar -czf $archive {}; if ($?) { croc send --qr $archive }; rm $archive -ErrorAction SilentlyContinue; Write-Host ''; Read-Host 'Press enter to continue'"
+# tv passes paths single-quoted; strip quotes, name archive after first folder.
+command = "$dirs = {} -replace \"'\", ''; $first = ($dirs -split ' ')[0]; $name = Split-Path $first -Leaf; $archive = Join-Path $env:TEMP \"$name.tar.gz\"; tar -czf $archive $dirs; if ($?) { croc send --qr $archive }; Remove-Item $archive -ErrorAction SilentlyContinue; cmd /c pause"
 shell = "powershell"
 {{ else -}}
 # Name the archive after the first selected folder: set -- parses the quoted
@@ -68,8 +70,8 @@ mode = "execute"
 [actions.croc_send_zip]
 description = "Archive selection into one tar.gz, then send with croc"
 {{ if eq .chezmoi.os `windows` -}}
-# Name the archive after the first selected folder
-command = "$sel = '{}'; if ($sel -match \"'([^']+)'\") { $name = Split-Path $Matches[1] -Leaf } else { $name = 'croc-send' }; $archive = Join-Path $env:TEMP \"$name.tar.gz\"; tar -czf $archive {}; if ($?) { croc send $archive }; rm $archive -ErrorAction SilentlyContinue; Write-Host ''; Read-Host 'Press enter to continue'"
+# tv passes paths single-quoted; strip quotes, name archive after first folder.
+command = "$dirs = {} -replace \"'\", ''; $first = ($dirs -split ' ')[0]; $name = Split-Path $first -Leaf; $archive = Join-Path $env:TEMP \"$name.tar.gz\"; tar -czf $archive $dirs; if ($?) { croc send $archive }; Remove-Item $archive -ErrorAction SilentlyContinue; cmd /c pause"
 shell = "powershell"
 {{ else -}}
 # Name the archive after the first selected folder: set -- parses the quoted
