@@ -23,6 +23,7 @@ shortcut = "f2"
 alt-s = "actions:croc_send"
 alt-q = "actions:croc_send_qr"
 alt-z = "actions:croc_send_zip"
+alt-d = "actions:sendme_send"
 
 [actions.cd]
 description = "Open a shell in the selected directory"
@@ -65,6 +66,18 @@ shell = "powershell"
 # Name the archive after the first selected folder: set -- parses the quoted
 # list, basename of $1 gives the folder name
 command = "set -- {}; name=$(basename -- \"$1\"); archive=\"/tmp/$name.tar.gz\"; tar -czf \"$archive\" {} && croc send --qr \"$archive\"; rm -f \"$archive\"; echo; read -r -p 'Press enter to continue...' || true"
+shell = "bash"
+{{ end -}}
+mode = "execute"
+
+# sendme takes a single PATH — multi-select is not supported by this action.
+[actions.sendme_send]
+description = "Send with sendme (P2P direct when possible, relay fallback — often faster than croc)"
+{{ if eq .chezmoi.os `windows` -}}
+command = "Clear-Host; sendme send {}; cmd /c pause"
+shell = "powershell"
+{{ else -}}
+command = "sendme send {}; echo; read -r -p 'Press enter to continue...'"
 shell = "bash"
 {{ end -}}
 mode = "execute"

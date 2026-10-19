@@ -22,6 +22,7 @@ offset = "{strip_ansi|split:\\::1}"
 enter = "actions:edit"
 alt-s = "actions:croc_send"
 alt-q = "actions:croc_send_qr"
+alt-d = "actions:sendme_send"
 
 [preview.env]
 BAT_THEME = "Astrodark"
@@ -55,6 +56,18 @@ command = "Clear-Host; croc send --qr '{strip_ansi|split:\\::0}'; cmd /c pause"
 shell = "powershell"
 {{ else -}}
 command = "croc send --qr {strip_ansi|split:\\::0}; echo; read -r -p 'Press enter to continue...'"
+shell = "bash"
+{{ end -}}
+mode = "execute"
+
+# sendme takes a single PATH — multi-select is not supported by this action.
+[actions.sendme_send]
+description = "Send with sendme (P2P direct when possible, relay fallback — often faster than croc)"
+{{ if eq .chezmoi.os `windows` -}}
+command = "Clear-Host; sendme send '{strip_ansi|split:\\::0}'; cmd /c pause"
+shell = "powershell"
+{{ else -}}
+command = "sendme send {strip_ansi|split:\\::0}; echo; read -r -p 'Press enter to continue...'"
 shell = "bash"
 {{ end -}}
 mode = "execute"
