@@ -34,6 +34,17 @@ windows_amd64 = "^bat-v[0-9.]+-x86_64-pc-windows-msvc\\.zip$"
 version = "11.5.4"
 repo = "schollz/croc"
 
+[tools.dotup]
+version = "0.1.0"
+repo = "Xoffio/dotup"
+
+[tools.dotup.dotup.assets]
+linux_amd64   = "^dotup-linux-x86_64\\.tar\\.gz$"
+linux_arm64   = "^dotup-linux-aarch64\\.tar\\.gz$"
+darwin_amd64  = "^dotup-darwin-x86_64\\.tar\\.gz$"
+darwin_arm64  = "^dotup-darwin-aarch64\\.tar\\.gz$"
+windows_amd64 = "^dotup-windows-x86_64\\.zip$"
+
 [tools.croc.dotup.assets]
 linux_amd64   = "^croc_v[0-9.]+_Linux-64bit\\.tar\\.gz$"
 linux_arm64   = "^croc_v[0-9.]+_Linux-ARM64\\.tar\\.gz$"

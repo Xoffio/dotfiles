@@ -1,0 +1,21 @@
+{{ $duVersion := .tools.dotup.version -}}
+{{- $duTriple := "" -}}
+{{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $duTriple = "linux-x86_64" -}}
+{{- else if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $duTriple = "linux-aarch64" -}}
+{{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $duTriple = "darwin-x86_64" -}}
+{{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $duTriple = "darwin-aarch64" -}}
+{{- else if eq .chezmoi.os `windows` -}}
+  {{- $duTriple = "windows-x86_64" -}}
+{{- end }}
+{{- $duChecksum := index .hashes.dotup (printf "%s_%s" .chezmoi.os .chezmoi.arch) | default "" -}}
+
+[".local/bin/dotup{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
+    type = "archive-file"
+    url = "https://github.com/Xoffio/dotup/releases/download/v{{ $duVersion }}/dotup-{{ $duTriple }}.{{ if eq .chezmoi.os `windows` }}zip{{ else }}tar.gz{{ end }}"
+    path = "dotup{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
+    executable = true
+    checksum.sha256 = "{{ $duChecksum }}"
