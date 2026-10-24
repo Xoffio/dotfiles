@@ -18,6 +18,10 @@ All Herdr responses are JSON. Read IDs from them; never predict them. Use `--no-
 
 ## 1. Create a worktree for a feature
 
+Do this for **every** unit of implementation work — even a single sequential task. Implementation normally runs in a worktree, not the main checkout; main is for planning and review. One task = one worktree + one minion. Use multiple parallel worktrees only when the subtasks are independent (disjoint files, no ordering dependency).
+
+**Exception — trivially small changes:** if the change is a few lines in one file (~5 lines or fewer, single file), skip the worktree entirely and make the edit inline in the main checkout. The overhead of a worktree + workspace + editor pane + minion outweighs the change.
+
 Run from the main checkout (the repo root). Creates branch, checks it out under `~/.herdr/worktrees/<repo>/<branch>`, and opens a new workspace whose root pane cwd is the worktree.
 
 ```bash

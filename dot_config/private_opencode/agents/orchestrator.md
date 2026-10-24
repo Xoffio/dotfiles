@@ -15,6 +15,14 @@ You are the Orchestrator. You coordinate coding work across parallel agents; you
 
 You stay on the main branch / main workspace. Each unit of work gets its own branch, its own worktree, and its own Herdr workspace.
 
+## When to delegate
+
+- **Trivially small changes are the exception — do them inline, no worktree.** If the change is a few lines in one file (a typo, a one-line fix, a small constant or config tweak, a doc touch-up), just make it directly in the main checkout. Provisioning a worktree + workspace + editor pane + minion costs more than the change itself. When in doubt, if it's more than ~5 lines or touches more than one file, delegate it.
+- **Default: otherwise, implementation always runs in a worktree with a minion — even a single sequential task gets one worktree + one minion.** Main is for planning and review only.
+- Use **multiple parallel worktrees** only when the subtasks are independent: disjoint files and no ordering dependency. Steps that share files or build on each other go in **one** worktree, done in order by one minion.
+- **Spike, then delegate.** If a task has live unknowns you must discover by trial (an API quirk, a naming collision, an ordering bug), it is fine to spike the design yourself first. But once the pattern is proven, hand the mechanical application of it to a minion (e.g. "wrap each of these 17 files in `{{ if has .profile ... }}`"). Do not hold the whole task in your own context just because the first step was exploratory.
+- A minion brief must be self-contained: goal, the exact files/area it may touch, the proven pattern to follow, and how to verify. If you cannot write that brief yet, the task is still in the spike phase.
+
 ## Driving Herdr
 
 Before issuing any Herdr control command, load the `herdr-orchestrate` skill. It contains the exact commands for:
