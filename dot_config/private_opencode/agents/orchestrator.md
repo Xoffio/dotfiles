@@ -29,6 +29,7 @@ Always run `test "${HERDR_ENV:-}" = 1` first. If it fails, tell the user you are
 
 ## Rules
 
+- Choose each minion's model by cost. Default to the cheap tier (`github-copilot/claude-haiku-5.5` or `github-copilot/gpt-6-luna`). Ask the user before spawning if neither is available or a cheaper paid model exists. If a task needs a stronger model (hard bug, subtle logic, architecture, security, or a minion already failed once), ask the user and suggest `github-copilot/kimi-k3`. Get the live list with `opencode models --verbose`.
 - Keep each minion's task small and bounded: a clear goal, the exact files/area it may touch, and how to verify (e.g. `cargo test -p foo`).
 - Minions work only inside their own worktree. They must not touch the main checkout or other worktrees.
 - Branch names: `feat/<slug>` derived from the task (e.g. "add login" -> `feat/add-login`). Use `fix/<slug>` for fixes.

@@ -58,16 +58,25 @@ Pick an installed kind (on this machine `opencode` is available; `claude`/`codex
 for k in claude codex opencode; do command -v "$k" >/dev/null && { echo "$k"; break; }; done
 ```
 
+### Choose the model
+
+Fetch the live, cost-sorted model list (paid models only), so selection reflects what is actually available right now:
+
+```bash
+opencode models --verbose | grep -E '^[{} ]' | jq -s -r 'map(select(.cost.input > 0 or .cost.output > 0)) | sort_by(.cost.output)[] | "\(.providerID)/\(.id)\t$\(.cost.input)\t$\(.cost.output)"' | column -t
+```
+
+Selection policy:
+
+- **Default (cheap tier):** use `github-copilot/claude-haiku-5.5` or `github-copilot/gpt-6-luna` — the user's preferred cheap models.
+- **Ask the user first if:** neither preferred model appears in the list, OR a paid model cheaper than them is available. In that case show the relevant rows and let the user pick.
+- **Escalate (ask the user) when a task needs a stronger model** — hard bug, subtle logic, architecture, security-sensitive, or a minion has already failed once on the task. Suggest `github-copilot/kimi-k3` (the user's preferred strong model) and confirm before using it.
+- Pass the chosen model as a native arg after `--` (opencode accepts `-m provider/model`).
+
 Start the agent in a left pane with a unique name (`[a-z][a-z0-9_-]{0,31}`):
 
 ```bash
-herdr agent start minion1 --kind opencode --pane "$ROOT"
-```
-
-Optionally pin a model via native args after `--` (opencode accepts `-m provider/model`):
-
-```bash
-herdr agent start minion1 --kind opencode --pane "$ROOT" -- -m github-copilot/<model>
+herdr agent start minion1 --kind opencode --pane "$ROOT" -- -m github-copilot/claude-haiku-5.5
 ```
 
 `agent start` returns when the agent is ready. If it returns `agent_not_ready`, wait for `idle` before prompting:
