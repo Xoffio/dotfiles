@@ -66,6 +66,15 @@ width = "80%"
 height = "80%"
 description = "tv channel list"
 
+# Lazygit — review changes, merge, etc.
+[[keys.command]]
+key = "prefix+shift+l"
+type = "popup"
+command = "lazygit"
+width = "90%"
+height = "90%"
+description = "lazygit"
+
 [ui]
 status_indicators = "symbols"
 # Use the native cursor instead of the block cursor for the host terminal.
