@@ -4,6 +4,8 @@
 {{- $herdrAsset := "" -}}
 {{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
   {{- $herdrAsset = "herdr-linux-x86_64" -}}
+{{- else if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $herdrAsset = "herdr-linux-aarch64" -}}
 {{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) -}}
   {{- $herdrAsset = "herdr-macos-aarch64" -}}
 {{- end }}
