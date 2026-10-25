@@ -1,2 +1,22 @@
+{{- $all := list "atuin" "bat" "croc" "dotup" "fd" "fzf" "grep" "herdr" "jq" "lazygit" "nvim" "opencode" "ripgrep" "sendme" "tv" "workmux" "yq" -}}
+{{- $minimal := list "croc" "fd" "fzf" "grep" "jq" "ripgrep" "sendme" "tv" "yq" -}}
+{{- $dev := concat $minimal (list "atuin" "bat" "herdr" "lazygit" "nvim" "opencode" "workmux") -}}
+{{- $presets := dict "minimal" $minimal "dev" $dev "full" $all -}}
+{{- $profile := promptChoiceOnce . "profile" "Install profile" (list "minimal" "dev" "full" "custom") -}}
+{{- $chosen := list -}}
+{{- if eq $profile "custom" -}}
+{{-   $chosen = promptMultichoice "Install tools" $all -}}
+{{- else -}}
+{{-   $chosen = get $presets $profile -}}
+{{- end -}}
+
 [edit]
   command = "nvim"
+
+[data]
+  profile = {{ $profile | quote }}
+
+[data.install]
+{{- range $tool := $all }}
+  {{ $tool }} = {{ has $tool $chosen }}
+{{- end }}

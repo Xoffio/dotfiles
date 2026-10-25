@@ -1,3 +1,4 @@
+{{- if .install.fd }}
 {{ $fdVersion := .tools.fd.version -}}
 {{- $fdTriple := "" -}}
 {{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
@@ -19,3 +20,5 @@
     path = "fd-v{{ $fdVersion }}-{{ $fdTriple }}/fd{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
     executable = true
     checksum.sha256 = "{{ $fdChecksum }}"
+
+{{- end }}

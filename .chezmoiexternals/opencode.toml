@@ -1,3 +1,4 @@
+{{- if .install.opencode }}
 # OpenCode
 {{ $ocVersion := .tools.opencode.version -}}
 {{- $ocFile := "" -}}
@@ -20,3 +21,5 @@
     path = "opencode{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
     executable = true
     checksum.sha256 = "{{ $ocChecksum }}"
+
+{{- end }}

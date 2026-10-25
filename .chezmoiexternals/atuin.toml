@@ -1,3 +1,4 @@
+{{- if .install.atuin }}
 # Atuin
 {{ $atVersion := .tools.atuin.version -}}
 {{- $atTriple := "" -}}
@@ -22,3 +23,5 @@
     {{ if $atChecksum -}}
     checksum.sha256 = "{{ $atChecksum }}"
     {{ end -}}
+
+{{- end }}

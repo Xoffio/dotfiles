@@ -1,3 +1,4 @@
+{{- if .install.grep }}
 {{ if eq .chezmoi.os "windows" -}}
 [".local/bin/grep.exe"]
 type = "archive-file"
@@ -5,4 +6,6 @@ url = "https://github.com/uutils/grep/releases/download/{{ .tools.uu_grep.versio
 path = "grep.exe"
 executable = true
 checksum.sha256 = "{{ .hashes.uu_grep.windows_amd64 }}"
+{{- end }}
+
 {{- end }}

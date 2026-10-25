@@ -35,6 +35,25 @@ chezmoi init --apply https://github.com/Xoffio/dotfiles.git
 This pulls down every managed dotfile and, on the first run, downloads
 anything declared in `.chezmoiexternal.toml` (lazygit, ripgrep, neovim, etc).
 
+### Install profiles
+
+On `chezmoi init`, you are prompted for an install profile:
+
+- `minimal`: croc, fd, fzf, grep, jq, ripgrep, sendme, tv, yq
+- `dev`: minimal + atuin, bat, herdr, lazygit, nvim, opencode, workmux
+- `full`: every external (adds dotup)
+- `custom`: opens a multiselect where you pick the tools to install
+
+The answers are saved in `~/.config/chezmoi/chezmoi.toml`, so later runs of
+`init` and `apply` don't ask again.
+
+To change the selection later, force the prompts to run again:
+
+```bash
+chezmoi init --prompt
+chezmoi apply -v
+```
+
 ## Day-to-day usage
 
 Pull latest changes from repo

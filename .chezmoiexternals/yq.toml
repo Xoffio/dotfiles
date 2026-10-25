@@ -1,5 +1,8 @@
+{{- if .install.yq }}
 [".local/bin/yq{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
 type = "file"
 url = "https://github.com/mikefarah/yq/releases/download/v{{ .tools.yq.version }}/yq_{{ .chezmoi.os }}_{{ .chezmoi.arch }}{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
 executable = true
 checksum.sha256 = "{{ index .hashes.yq (printf "%s_%s" .chezmoi.os .chezmoi.arch) }}"
+
+{{- end }}

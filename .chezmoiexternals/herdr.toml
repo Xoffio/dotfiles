@@ -1,3 +1,4 @@
+{{- if .install.herdr }}
 # Herdr
 {{ $herdrVersion := .tools.herdr.version -}}
 {{- $herdrAsset := "" -}}
@@ -35,4 +36,6 @@
     stripComponents = 1
     include = ["conpty/**"]
     checksum.sha256 = "{{ $herdrWindowsChecksum }}"
+{{- end }}
+
 {{- end }}

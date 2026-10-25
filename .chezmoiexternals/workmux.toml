@@ -1,3 +1,4 @@
+{{- if .install.workmux }}
 {{ if ne .chezmoi.os "windows" }}
 [".local/bin/workmux"]
 type = "archive-file"
@@ -6,3 +7,5 @@ path = "workmux"
 executable = true
 checksum.sha256 = "{{ index .hashes.workmux (printf "%s_%s" .chezmoi.os .chezmoi.arch) }}"
 {{ end }}
+
+{{- end }}

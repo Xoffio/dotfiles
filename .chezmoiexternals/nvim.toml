@@ -1,3 +1,4 @@
+{{- if .install.nvim }}
 [".config/nvim"]
 type = "git-repo"
 url = "https://github.com/Xoffio/astrofile.git"
@@ -22,3 +23,5 @@ url = "https://github.com/neovim/neovim/releases/download/v{{ .tools.neovim.vers
 {{ end -}}
 exact = true
 stripComponents = 1
+
+{{- end }}

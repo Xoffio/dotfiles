@@ -1,5 +1,8 @@
+{{- if .install.jq }}
 [".local/bin/jq{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
 type = "file"
 url = "https://github.com/jqlang/jq/releases/download/jq-{{ .tools.jq.version }}/jq-{{ if eq .chezmoi.os `darwin` }}macos{{ else if eq .chezmoi.os `windows` }}windows{{ else }}linux{{ end }}-{{ if eq .chezmoi.arch `arm64` }}arm64{{ else }}amd64{{ end }}{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
 executable = true
 checksum.sha256 = "{{ index .hashes.jq (printf "%s_%s" .chezmoi.os .chezmoi.arch) }}"
+
+{{- end }}

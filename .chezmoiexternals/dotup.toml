@@ -1,3 +1,4 @@
+{{- if .install.dotup }}
 {{ $duVersion := .tools.dotup.version -}}
 {{- $duTriple := "" -}}
 {{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
@@ -19,3 +20,5 @@
     path = "dotup{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
     executable = true
     checksum.sha256 = "{{ $duChecksum }}"
+
+{{- end }}
