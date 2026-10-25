@@ -28,21 +28,24 @@ aarch64 | arm64) arch="arm64" ;;
 	;;
 esac
 
-# --- detect musl (linux only) ---
-musl=""
-if [ "$os" = "linux" ]; then
-	musl="-musl"
-fi
-
-filename="chezmoi-${os}-${arch}${musl}"
-
 mkdir -p "$INSTALL_DIR"
 tmpdir=$(mktemp -d)
 cd "$tmpdir"
 
+curl -fsSLO "https://github.com/twpayne/chezmoi/releases/download/v${CHEZMOI_VERSION}/chezmoi_${CHEZMOI_VERSION}_checksums.txt"
+
+# Prefer the static musl build (works on old glibc systems). It is published
+# for linux amd64 only; everything else uses the glibc tarball.
+if [ "$os" = "linux" ] && [ "$arch" = "amd64" ]; then
+	filename="chezmoi-linux-amd64-musl"
+elif [ "$os" = "linux" ]; then
+	filename="chezmoi_${CHEZMOI_VERSION}_linux_${arch}.tar.gz"
+else
+	filename="chezmoi-${os}-${arch}"
+fi
+
 echo "Downloading chezmoi v${CHEZMOI_VERSION} (${filename})..."
 curl -fsSLO "https://github.com/twpayne/chezmoi/releases/download/v${CHEZMOI_VERSION}/${filename}"
-curl -fsSLO "https://github.com/twpayne/chezmoi/releases/download/v${CHEZMOI_VERSION}/chezmoi_${CHEZMOI_VERSION}_checksums.txt"
 
 echo "Verifying checksum..."
 if command -v sha256sum >/dev/null 2>&1; then
@@ -51,8 +54,13 @@ else
 	grep " ${filename}\$" "chezmoi_${CHEZMOI_VERSION}_checksums.txt" | shasum -a 256 -c -
 fi
 
-chmod +x "$filename"
-mv "$filename" "$INSTALL_DIR/chezmoi"
+if [ "$filename" = "chezmoi_${CHEZMOI_VERSION}_linux_${arch}.tar.gz" ]; then
+	tar -xzf "$filename" chezmoi
+	mv chezmoi "$INSTALL_DIR/chezmoi"
+else
+	mv "$filename" "$INSTALL_DIR/chezmoi"
+fi
+chmod +x "$INSTALL_DIR/chezmoi"
 
 cd "$HOME"
 rm -rf "$tmpdir"
