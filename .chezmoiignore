@@ -3,6 +3,11 @@ install.sh
 install.ps1
 AGENTS.md
 
+# nvim not selected in the install profile: skip its symlink too
+{{- if not .install.nvim }}
+.local/bin/nvim
+{{- end }}
+
 # Ignore in OS that are not Windows
 {{- if ne .chezmoi.os "windows" }}
 Documents
