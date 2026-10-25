@@ -84,9 +84,10 @@ host_cursor = "native"
 
 [ui.sound]
 enabled = true
-path = "~/.config/herdr/sounds/sounds/woo_vu_luvub_dub_dub.mp3"
-done_path = "~/.config/herdr/sounds/hsounds/oh_yeah.mp3"
-request_path = "~/.config/herdr/sounds/sounds/i_want_you.mp3"
+{{- $sounds := joinPath .chezmoi.homeDir ".config" "herdr" "sounds" | replace "\\" "/" }}
+path = "{{ joinPath $sounds "woo_vu_luvub_dub_dub.mp3" }}"
+done_path = "{{ joinPath $sounds "oh_yeah.mp3" }}"
+request_path = "{{ joinPath $sounds "i_want_you.mp3" }}"
 
 [ui.toast]
 delivery = "herdr"
