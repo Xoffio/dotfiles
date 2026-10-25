@@ -201,3 +201,15 @@ linux_arm64   = "^yq_linux_arm64$"
 darwin_amd64  = "^yq_darwin_amd64$"
 darwin_arm64  = "^yq_darwin_arm64$"
 windows_amd64 = "^yq_windows_amd64\\.exe$"
+
+[tools.helm]
+version = "4.3.1"
+repo = "helm/helm"
+
+[tools.helm.dotup.assets]
+linux_amd64   = "^helm-v[0-9.]+-linux-amd64\\.tar\\.gz$"
+linux_arm64   = "^helm-v[0-9.]+-linux-arm64\\.tar\\.gz$"
+darwin_amd64  = "^helm-v[0-9.]+-darwin-amd64\\.tar\\.gz$"
+darwin_arm64  = "^helm-v[0-9.]+-darwin-arm64\\.tar\\.gz$"
+windows_amd64 = "^helm-v[0-9.]+-windows-amd64\\.zip$"
+windows_arm64 = "^helm-v[0-9.]+-windows-arm64\\.zip$"

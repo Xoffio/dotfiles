@@ -1,6 +1,7 @@
-{{- $all := list "atuin" "bat" "croc" "dotup" "fd" "fzf" "gdu" "grep" "herdr" "jq" "lazygit" "nvim" "opencode" "ripgrep" "sendme" "tv" "workmux" "yq" -}}
+{{- $all := list "atuin" "bat" "croc" "dotup" "fd" "fzf" "gdu" "grep" "helm" "herdr" "jq" "lazygit" "nvim" "opencode" "ripgrep" "sendme" "tv" "workmux" "yq" -}}
 {{- $minimal := list "croc" "fd" "fzf" "gdu" "grep" "jq" "ripgrep" "sendme" "tv" "yq" -}}
 {{- $dev := concat $minimal (list "atuin" "bat" "herdr" "lazygit" "nvim" "opencode" "workmux") -}}
+{{- $kube := list "helm" -}}
 {{- $presets := dict "minimal" $minimal "dev" $dev "full" $all -}}
 {{- $profile := promptChoiceOnce . "profile" "Install profile" (list "minimal" "dev" "full" "custom") -}}
 {{- $chosen := list -}}
@@ -9,12 +10,21 @@
 {{- else -}}
 {{-   $chosen = get $presets $profile -}}
 {{- end -}}
+{{- $kubeWanted := promptBoolOnce . "kube" "Install kubernetes binaries (helm)" false -}}
+{{- if $kubeWanted -}}
+{{-   range $tool := $kube -}}
+{{-     if not (has $tool $chosen) -}}
+{{-       $chosen = append $chosen $tool -}}
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
 
 [edit]
   command = "nvim"
 
 [data]
   profile = {{ $profile | quote }}
+  kube = {{ $kubeWanted }}
 
 [data.install]
 {{- range $tool := $all }}

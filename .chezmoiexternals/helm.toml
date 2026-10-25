@@ -1,0 +1,15 @@
+{{- if .install.helm }}
+{{ $helmVersion := .tools.helm.version -}}
+{{- $helmOs := .chezmoi.os -}}
+{{- $helmArch := .chezmoi.arch -}}
+{{- $helmChecksum := index .hashes.helm (printf "%s_%s" .chezmoi.os .chezmoi.arch) | default "" -}}
+{{- $helmExt := "tar.gz" -}}
+{{- if eq .chezmoi.os "windows" -}}{{- $helmExt = "zip" -}}{{- end }}
+
+[".local/bin/helm{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
+    type = "archive-file"
+    url = "https://get.helm.sh/helm-v{{ $helmVersion }}-{{ $helmOs }}-{{ $helmArch }}.{{ $helmExt }}"
+    path = "{{ $helmOs }}-{{ $helmArch }}/helm{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"
+    executable = true
+    checksum.sha256 = "{{ $helmChecksum }}"
+{{- end }}
