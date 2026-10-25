@@ -84,10 +84,16 @@ host_cursor = "native"
 
 [ui.sound]
 enabled = true
-{{- $sounds := joinPath .chezmoi.homeDir ".config" "herdr" "sounds" | replace "\\" "/" }}
-path = "{{ joinPath $sounds "woo_vu_luvub_dub_dub.mp3" }}"
-done_path = "{{ joinPath $sounds "oh_yeah.mp3" }}"
-request_path = "{{ joinPath $sounds "i_want_you.mp3" }}"
+{{- if eq .chezmoi.os "windows" }}
+{{- $sounds := joinPath .chezmoi.homeDir ".config" "herdr" "sounds" }}
+path = {{ joinPath $sounds "woo_vu_luvub_dub_dub.mp3" | quote }}
+done_path = {{ joinPath $sounds "oh_yeah.mp3" | quote }}
+request_path = {{ joinPath $sounds "i_want_you.mp3" | quote }}
+{{- else }}
+path = "sounds/woo_vu_luvub_dub_dub.mp3"
+done_path = "sounds/oh_yeah.mp3"
+request_path = "sounds/i_want_you.mp3"
+{{- end }}
 
 [ui.toast]
 delivery = "herdr"
