@@ -9,7 +9,7 @@
 # the bottom).
 
 [tools.atuin]
-version = "18.23.0"
+version = "18.24.2"
 repo = "atuinsh/atuin"
 
 [tools.atuin.dotup.assets]
@@ -31,7 +31,7 @@ darwin_arm64  = "^bat-v[0-9.]+-aarch64-apple-darwin\\.tar\\.gz$"
 windows_amd64 = "^bat-v[0-9.]+-x86_64-pc-windows-msvc\\.zip$"
 
 [tools.croc]
-version = "11.5.4"
+version = "11.5.5"
 repo = "schollz/croc"
 
 [tools.dotup]
@@ -97,7 +97,7 @@ windows_amd64 = "^jq-windows-amd64\\.exe$"
 
 # lazygit uses x86_64 (not amd64) in asset names.
 [tools.lazygit]
-version = "0.65.1"
+version = "0.66.2"
 repo = "jesseduffield/lazygit"
 
 [tools.lazygit.dotup.assets]
@@ -116,7 +116,7 @@ version = "0.12.5"
 repo = "neovim/neovim"
 
 [tools.opencode]
-version = "1.19.3"
+version = "1.19.4"
 repo = "anomalyco/opencode"
 
 [tools.opencode.dotup.assets]
