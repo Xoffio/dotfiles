@@ -74,7 +74,8 @@ mode = "execute"
 [actions.sendme_send]
 description = "Send with sendme (P2P direct when possible, relay fallback — often faster than croc)"
 {{ if eq .chezmoi.os `windows` -}}
-command = "Clear-Host; sendme send {}; cmd /c pause"
+# tv passes the folder with a trailing backslash; sendme fails on it (os error 123)
+command = "Clear-Host; sendme send ({}).TrimEnd('\\'); cmd /c pause"
 shell = "powershell"
 {{ else -}}
 command = "sendme send {}; echo; read -r -p 'Press enter to continue...'"
