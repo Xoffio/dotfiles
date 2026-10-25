@@ -3,6 +3,8 @@
 {{- $crocFile := "" -}}
 {{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
   {{- $crocFile = "Linux-64bit.tar.gz" -}}
+{{- else if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $crocFile = "Linux-ARM64.tar.gz" -}}
 {{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) -}}
   {{- $crocFile = "macOS-ARM64.tar.gz" -}}
 {{- else if and (eq .chezmoi.os `windows`) (eq .chezmoi.arch `amd64`) -}}
