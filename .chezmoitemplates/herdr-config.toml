@@ -23,6 +23,7 @@ resize_pane_up = "prefix+ctrl+up"
 resize_pane_right = "prefix+ctrl+right"
 remove_worktree = "prefix+d"
 
+{{- if ne .chezmoi.os "windows" }}
 # Seamless nvim <-> herdr pane navigation via smart-splits.nvim's herdr plugin
 [[keys.command]]
 key = "ctrl+h"
@@ -47,6 +48,7 @@ key = "ctrl+l"
 type = "plugin_action"
 command = "smart-splits.nvim.right"
 description = "navigate right (vim/herdr)"
+{{- end }}
 
 # Fuzzy content search with television (ripgrep channel)
 [[keys.command]]
