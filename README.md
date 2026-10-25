@@ -39,7 +39,7 @@ anything declared in `.chezmoiexternal.toml` (lazygit, ripgrep, neovim, etc).
 
 On `chezmoi init`, you are prompted for an install profile:
 
-- `minimal`: croc, fd, fzf, grep, jq, ripgrep, sendme, tv, yq
+- `minimal`: croc, fd, fzf, gdu, grep, jq, ripgrep, sendme, tv, yq
 - `dev`: minimal + atuin, bat, herdr, lazygit, nvim, opencode, workmux
 - `full`: every external (adds dotup)
 - `custom`: opens a multiselect where you pick the tools to install

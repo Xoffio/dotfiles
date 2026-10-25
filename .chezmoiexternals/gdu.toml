@@ -1,0 +1,34 @@
+{{- if .install.gdu }}
+{{ $gduVersion := .tools.gdu.version -}}
+{{- $gduAsset := "" -}}
+{{- $gduPath := "" -}}
+{{- if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $gduAsset = "gdu_linux_amd64_static.tgz" -}}
+  {{- $gduPath = "gdu_linux_amd64_static" -}}
+{{- else if and (eq .chezmoi.os `linux`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $gduAsset = "gdu_linux_arm64.tgz" -}}
+  {{- $gduPath = "gdu_linux_arm64" -}}
+{{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $gduAsset = "gdu_darwin_amd64.tgz" -}}
+  {{- $gduPath = "gdu_darwin_amd64" -}}
+{{- else if and (eq .chezmoi.os `darwin`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $gduAsset = "gdu_darwin_arm64.tgz" -}}
+  {{- $gduPath = "gdu_darwin_arm64" -}}
+{{- else if and (eq .chezmoi.os `windows`) (eq .chezmoi.arch `amd64`) -}}
+  {{- $gduAsset = "gdu_windows_amd64.exe.zip" -}}
+  {{- $gduPath = "gdu_windows_amd64.exe" -}}
+{{- else if and (eq .chezmoi.os `windows`) (eq .chezmoi.arch `arm64`) -}}
+  {{- $gduAsset = "gdu_windows_arm64.exe.zip" -}}
+  {{- $gduPath = "gdu_windows_arm64.exe" -}}
+{{- end }}
+{{- $gduChecksum := index .hashes.gdu (printf "%s_%s" .chezmoi.os .chezmoi.arch) | default "" -}}
+
+{{- if $gduAsset }}
+[".local/bin/gdu{{ if eq .chezmoi.os `windows` }}.exe{{ end }}"]
+    type = "archive-file"
+    url = "https://github.com/dundee/gdu/releases/download/v{{ $gduVersion }}/{{ $gduAsset }}"
+    path = "{{ $gduPath }}"
+    executable = true
+    checksum.sha256 = "{{ $gduChecksum }}"
+{{- end }}
+{{- end }}
