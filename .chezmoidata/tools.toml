@@ -9,7 +9,7 @@
 # the bottom).
 
 [tools.atuin]
-version = "18.24.2"
+version = "18.24.5"
 repo = "atuinsh/atuin"
 
 [tools.atuin.dotup.assets]
@@ -109,7 +109,7 @@ windows_amd64 = "^jq-windows-amd64\\.exe$"
 
 # lazygit uses x86_64 (not amd64) in asset names.
 [tools.lazygit]
-version = "0.66.2"
+version = "0.66.3"
 repo = "jesseduffield/lazygit"
 
 [tools.lazygit.dotup.assets]
