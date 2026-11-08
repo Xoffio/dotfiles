@@ -1,8 +1,9 @@
 /**
- * Atuin plugin for opencode.
+ * Atuin plugin for opencode 2.
  *
- * Tracks bash commands executed by opencode in Atuin history with author
- * `opencode`.
+ * Tracks shell commands executed by opencode in Atuin history with author
+ * `opencode`. (opencode 1.x takes a plugin of another shape: `atuin hook
+ * install opencode` installs the one for the opencode it finds.)
  *
  * Install with:
  *   atuin hook install opencode
@@ -10,36 +11,33 @@
  * Then restart opencode.
  */
 
-import type { Plugin } from "@opencode-ai/plugin";
 import { spawn } from "node:child_process";
 
 const ATUIN_AUTHOR = "opencode";
 const ATUIN_TIMEOUT_MS = 10_000;
 
-// opencode's shell tool keeps the id `bash` for compatibility, even though its
-// module is named `shell`.
-const BASH_TOOL = "bash";
+const SHELL_TOOL = "shell";
 
-// A command that did not exit on its own reports a null exit code, so
-// substitute the conventional code for each of the two ways that happens.
-const EXIT_ABORTED = 130;
+// A command killed for running too long reports no exit code; record the
+// conventional one.
 const EXIT_TIMED_OUT = 124;
 
-// A denied command reaches neither `shell.env` nor `tool.execute.after`, so its
-// proposal is never claimed and would sit in the map for the life of the
-// session. Bound the map to cap that. Evicting the oldest can in principle drop
-// a command still waiting at its permission prompt, which just goes unrecorded,
-// but only a handful of calls are ever genuinely in flight at once.
+// A denied command never completes, so its proposal is never claimed and would
+// sit in the map for the life of the session. Bound the map to cap that.
+// Evicting the oldest can in principle drop a command still waiting at its
+// permission prompt, which just goes unrecorded, but only a handful of calls
+// are ever genuinely in flight at once.
 const MAX_PROPOSED = 128;
 
 interface Proposal {
 	command: string;
 	intent?: string;
+	started?: Started;
 }
 
-interface Entry {
-	historyId: string;
-	cwd: string;
+interface Started {
+	shell: ShellCreate;
+	at: bigint;
 }
 
 interface AtuinResult {
@@ -47,17 +45,37 @@ interface AtuinResult {
 	stdout: string;
 }
 
-interface ToolOutput {
-	output: string;
-	metadata: unknown;
+// What opencode hands its tool hooks: the call (`id`) and its input, and after
+// it ran, how it ended.
+interface ToolCall {
+	tool: string;
+	id: string;
+	input: unknown;
+	status?: "completed" | "error";
+	result?: { metadata?: { exit?: unknown; status?: unknown; timeout?: unknown } };
+}
+
+// What opencode hands `create.before`: the shell it is about to start. Its
+// `cwd` is made absolute once the command is cleared to run.
+interface ShellCreate {
+	command: string;
+	cwd: string;
+}
+
+interface Hooks {
+	tool: {
+		hook(name: string, fn: (call: ToolCall) => void | Promise<void>): unknown;
+	};
+	shell: {
+		hook(name: string, fn: (shell: ShellCreate) => void | Promise<void>): unknown;
+	};
 }
 
 /**
  * Run Atuin, resolving rather than rejecting on every failure.
  *
  * Spawned without a shell: a recorded command is arbitrary text that has to
- * reach Atuin as a single argv entry unmangled, which rules out the Bun shell
- * the plugin API hands us.
+ * reach Atuin as a single argv entry unmangled.
  */
 function atuin(args: string[], cwd: string): Promise<AtuinResult> {
 	return new Promise((resolve) => {
@@ -111,18 +129,6 @@ async function startHistory(
 	return historyId.length > 0 ? historyId : undefined;
 }
 
-// The tool records an abort or a timeout in its output text rather than as an
-// exit code, so string matching is the only way to tell the two apart.
-function exitCodeFrom(output: ToolOutput): number {
-	const exit = (output.metadata as { exit?: unknown } | undefined)?.exit;
-	if (typeof exit === "number") return exit;
-
-	const text = typeof output.output === "string" ? output.output : "";
-	if (text.includes("User aborted the command")) return EXIT_ABORTED;
-	if (/exceeding timeout \d+ ms/.test(text)) return EXIT_TIMED_OUT;
-	return 1;
-}
-
 // A rejected hook aborts opencode's tool call and discards the command's
 // output. A missing history entry is always the better failure.
 async function swallowFailures(work: () => void | Promise<void>): Promise<void> {
@@ -133,90 +139,90 @@ async function swallowFailures(work: () => void | Promise<void>): Promise<void> 
 	}
 }
 
-// opencode treats every export of a plugin file as a plugin function and fails
-// to load the file if one is not, so keep this the only export.
-export const AtuinPlugin: Plugin = async ({ directory }) => {
-	// Commands opencode has proposed but is not yet cleared to run, keyed by
-	// tool call ID.
+// The exit code a command that completed ended with: the shell tool completes
+// a command whatever its exit code, and one it killed for running too long has
+// none.
+function exitCodeOf(call: ToolCall): number {
+	const metadata = call.result?.metadata;
+	if (typeof metadata?.exit === "number") return metadata.exit;
+	if (metadata?.timeout === true) return EXIT_TIMED_OUT;
+	return 1;
+}
+
+// opencode's hooks before a shell runs (`execute.before`, `create.before`) both
+// come before the permission check, and none comes between that check and the
+// command starting, so a command is recorded once it has ended: started then,
+// and ended with the time since its shell was created. That time includes any
+// wait at the permission prompt, and the entry's timestamp is when the command
+// ended. A command that was denied ends the call in an error and is not
+// recorded; so does one the user cancels, which is not recorded either. One
+// left running in the background (`status: "running"`) has not ended, and is
+// not recorded.
+function setup(ctx: Hooks) {
+	// Commands proposed, keyed by tool call ID.
 	const proposed = new Map<string, Proposal>();
-	// Atuin history IDs for commands that did start, keyed by tool call ID.
-	const running = new Map<string, Entry>();
 
-	function propose(callID: string, args: unknown) {
-		const { command, description } = (args ?? {}) as {
-			command?: unknown;
-			description?: unknown;
-		};
-		if (typeof command !== "string" || command.length === 0) return;
+	ctx.tool.hook("execute.before", (call) =>
+		swallowFailures(() => {
+			if (call.tool !== SHELL_TOOL) return;
+			const { command, description } = (call.input ?? {}) as {
+				command?: unknown;
+				description?: unknown;
+			};
+			if (typeof command !== "string" || command.length === 0) return;
+			if (proposed.size >= MAX_PROPOSED) {
+				const oldest = proposed.keys().next().value;
+				if (oldest !== undefined) proposed.delete(oldest);
+			}
+			proposed.set(call.id, {
+				command,
+				intent:
+					typeof description === "string" && description.length > 0
+						? description
+						: undefined,
+			});
+		}),
+	);
 
-		if (proposed.size >= MAX_PROPOSED) {
-			const oldest = proposed.keys().next().value;
-			if (oldest !== undefined) proposed.delete(oldest);
-		}
+	// Carries no call ID: it goes to the oldest proposal of the same command
+	// whose shell has not been created yet.
+	ctx.shell.hook("create.before", (shell) =>
+		swallowFailures(() => {
+			for (const proposal of proposed.values()) {
+				if (proposal.started || proposal.command !== shell.command) continue;
+				proposal.started = { shell, at: process.hrtime.bigint() };
+				return;
+			}
+		}),
+	);
 
-		proposed.set(callID, {
-			command,
-			intent:
-				typeof description === "string" && description.length > 0
-					? description
-					: undefined,
-		});
-	}
+	ctx.tool.hook("execute.after", (call) =>
+		swallowFailures(async () => {
+			if (call.tool !== SHELL_TOOL) return;
+			const proposal = proposed.get(call.id);
+			proposed.delete(call.id);
+			if (!proposal?.started || call.status !== "completed") return;
+			if (call.result?.metadata?.status === "running") return;
 
-	async function start(callID: string, cwd: string) {
-		const proposal = proposed.get(callID);
-		if (!proposal) return;
-		proposed.delete(callID);
+			const { shell, at } = proposal.started;
+			const duration = process.hrtime.bigint() - at;
+			const historyId = await startHistory(shell.cwd, proposal);
+			if (!historyId) return;
+			await atuin(
+				[
+					"history",
+					"end",
+					historyId,
+					"--exit",
+					String(exitCodeOf(call)),
+					"--duration",
+					String(duration),
+				],
+				shell.cwd,
+			);
+		}),
+	);
+}
 
-		const historyId = await startHistory(cwd, proposal);
-		if (historyId) running.set(callID, { historyId, cwd });
-	}
-
-	async function finish(callID: string, output: ToolOutput) {
-		proposed.delete(callID);
-
-		const entry = running.get(callID);
-		if (!entry) return;
-		running.delete(callID);
-
-		await atuin(
-			[
-				"history",
-				"end",
-				entry.historyId,
-				"--exit",
-				String(exitCodeFrom(output)),
-			],
-			entry.cwd,
-		);
-	}
-
-	return {
-		// Fires before the permission prompt, so only remember the command here.
-		// Starting an entry would record commands the user went on to deny.
-		"tool.execute.before": (input, output) =>
-			swallowFailures(() => {
-				if (input.tool !== BASH_TOOL) return;
-				propose(input.callID, output.args);
-			}),
-
-		// The only hook that runs after the permission prompt but before the
-		// command does, and the only one given the resolved working directory.
-		// It also fires for user-run shells and for PTY sessions, which
-		// opencode did not run; those are skipped because they have no
-		// proposal to claim, not because of the call ID check below.
-		"shell.env": (input) =>
-			swallowFailures(() => {
-				if (!input.callID) return;
-				return start(input.callID, input.cwd || directory);
-			}),
-
-		// Also fires when the user aborts a command, unlike the error paths,
-		// which skip this hook and leave the entry open.
-		"tool.execute.after": (input, output) =>
-			swallowFailures(() => {
-				if (input.tool !== BASH_TOOL) return;
-				return finish(input.callID, output);
-			}),
-	};
-};
+// opencode 2 loads a plugin's default export: its `id` and `setup`.
+export default { id: "atuin", setup };

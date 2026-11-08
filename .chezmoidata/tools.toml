@@ -128,7 +128,7 @@ version = "0.12.5"
 repo = "neovim/neovim"
 
 [tools.opencode]
-version = "1.19.4"
+version = "2.2.6"
 repo = "anomalyco/opencode"
 
 [tools.opencode.dotup.assets]
